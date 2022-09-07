@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "component_registry",
     srcs = [
@@ -34,10 +36,4 @@ cc_library(
         ":component_registry",
         "//util:stop_token",
     ],
-)
-
-cc_binary(
-    name = "main",
-    srcs = ["main.cpp"],
-    deps = [":application"],
 )

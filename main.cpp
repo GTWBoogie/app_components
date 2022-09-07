@@ -1,5 +1,5 @@
-#include "application.h"
-#include "iservice.h"
+#include "dependency/application.h"
+#include "dependency/iservice.h"
 
 #include <iostream>
 #include <thread>
