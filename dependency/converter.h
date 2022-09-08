@@ -6,12 +6,12 @@
 
 using AnyPtr = std::shared_ptr<std::any>;
 
-class ComponentConverter
+class Converter
 {
 public:
   using ConvertFunction = std::function<AnyPtr(AnyPtr)>;
 
-  ComponentConverter(ConvertFunction converter);
+  Converter(ConvertFunction converter);
 
   AnyPtr Convert(AnyPtr instance);
 

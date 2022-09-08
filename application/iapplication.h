@@ -1,10 +1,10 @@
 #pragma once
 
-class ComponentRegistry;
+class Registry;
 
 class IApplication
 {
 public:
-  virtual ComponentRegistry& Components() = 0;
+  virtual Registry& Components() = 0;
   virtual void Run() = 0;
 };

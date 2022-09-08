@@ -1,39 +1,53 @@
-package(default_visibility = ["//visibility:public"])
+#package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "lifetime",
+    hdrs = ["lifetime.h"]
+)
+
+cc_library(
+    name = "instance",
+    hdrs = ["instance.h"],
+    deps = [":lifetime"]
+)
+
+cc_library(
+    name = "converter",
+    srcs = ["converter.cpp"],
+    hdrs = ["converter.h"]
+)
+
+cc_library(
+    name = "creator",
+    srcs = ["creator.cpp"],
+    hdrs = ["creator.h"],
+    deps = [":instance"]
+)
+
+cc_library(
+    name = "description",
+    srcs = ["description.cpp"],
+    hdrs = ["description.h"],
+    deps = [
+        ":creator",
+        ":converter",
+    ]
+)
 
 cc_library(
     name = "component_registry",
     srcs = [
-        "component_converter.cpp",
-        "component_creator.cpp",
-        "component_description.cpp",
-        "component_provider.cpp",
+        "provider.cpp",
     ],
     hdrs = [
-        "component_converter.h",
-        "component_creator.h",
-        "component_description.h",
-        "component_instance.h",
-        "component_provider.h",
-        "component_registry.h",
-        "lifetime.h",
+        "provider.h",
+        "registry.h",
     ],
     deps = [
+        ":description",
         "//util:tuple",
         "@boost//:callable_traits",
         "@boost//:core",
     ],
-)
-
-cc_library(
-    name = "application",
-    srcs = ["application.cpp"],
-    hdrs = [
-        "application.h",
-        "iapplication.h",
-        "iservice.h",
-    ],
-    deps = [
-        ":component_registry",
-        "//util:stop_token",
-    ],
+    visibility = ["//visibility:public"]
 )

@@ -1,7 +1,7 @@
-#include "application.h"
+#include "application/application.h"
 
 #include "util/stop_token.h"
-#include "iservice.h"
+#include "application/iservice.h"
 
 #include <thread>
 
@@ -11,7 +11,7 @@ Application::Application(int argc, char *argv[])
 {
 }
 
-ComponentRegistry& Application::Components()
+Registry& Application::Components()
 {
   return _registry;
 }

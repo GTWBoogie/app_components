@@ -8,7 +8,7 @@
 
 using AnyPtr = std::shared_ptr<std::any>;
 
-struct ComponentInstance {
+struct Instance {
   AnyPtr instance;
   std::vector<AnyPtr> dependencies;
 };

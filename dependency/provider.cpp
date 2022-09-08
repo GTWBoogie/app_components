@@ -1,24 +1,24 @@
-#include "component_provider.h"
+#include "provider.h"
 
-#include "component_registry.h"
+#include "registry.h"
 
-ComponentProvider::ComponentProvider(ComponentRegistry& registry)
+Provider::Provider(Registry& registry)
  : _registry(registry)
 {
 }
 
-ComponentInstance ComponentProvider::GetComponentInstance(std::type_index type)
+Instance Provider::GetComponentInstance(std::type_index type)
 {
-  ComponentDescription& description = _registry.GetDescriptions(type).back();
+  Description& description = _registry.GetDescriptions(type).back();
 
   std::lock_guard<std::recursive_mutex> lock(_mutex);
   return ManageInstanceCreation(description);
 }
 
-std::vector<ComponentInstance> ComponentProvider::GetComponentInstances(std::type_index type)
+std::vector<Instance> Provider::GetComponentInstances(std::type_index type)
 {
   auto& descriptions = _registry.GetDescriptions(type);
-  std::vector<ComponentInstance> result;
+  std::vector<Instance> result;
   result.reserve(descriptions.size());
 
   std::lock_guard<std::recursive_mutex> lock(_mutex);
@@ -30,13 +30,13 @@ std::vector<ComponentInstance> ComponentProvider::GetComponentInstances(std::typ
   return result;
 }
 
-ComponentInstance ComponentProvider::ManageInstanceCreation(ComponentDescription& description)
+Instance Provider::ManageInstanceCreation(Description& description)
 {
   switch (description.GetLifetime())
   {
     case Lifetime::Transient:
       {
-        ComponentInstance ci = description.GetCreator()->CreateInstance(*this);
+        Instance ci = description.GetCreator()->CreateInstance(*this);
         _floating_instances.push_back(ci);
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
@@ -47,11 +47,11 @@ ComponentInstance ComponentProvider::ManageInstanceCreation(ComponentDescription
         auto it = _instances.find(description.GetCreator());
         if (it != _instances.end())
         {
-          ComponentInstance ci = it->second;
+          Instance ci = it->second;
           ci.instance = description.GetConverter().Convert(ci.instance);
           return ci;
         }
-        ComponentInstance ci = description.GetCreator()->CreateInstance(*this);
+        Instance ci = description.GetCreator()->CreateInstance(*this);
         _instances[description.GetCreator()] = ci;
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
@@ -59,25 +59,25 @@ ComponentInstance ComponentProvider::ManageInstanceCreation(ComponentDescription
   }
 }
 
-ScopedComponentProvider ComponentProvider::GetScope()
+ScopedProvider Provider::GetScope()
 {
-  return ScopedComponentProvider(*this);
+  return ScopedProvider(*this);
 }
 
-ScopedComponentProvider::ScopedComponentProvider(ComponentProvider& parent)
- : ComponentProvider(parent._registry) 
+ScopedProvider::ScopedProvider(Provider& parent)
+ : Provider(parent._registry)
  , _parent(parent)
 {
-  _registry.AddInstance<ComponentProvider>(this, false);
+  _registry.AddInstance<Provider>(this, false);
 }
 
-ComponentInstance ScopedComponentProvider::ManageInstanceCreation(ComponentDescription& description)
+Instance ScopedProvider::ManageInstanceCreation(Description& description)
 {
   switch (description.GetLifetime())
   {
     case Lifetime::Transient:
       {
-        ComponentInstance ci = description.GetCreator()->CreateInstance(*this);
+        Instance ci = description.GetCreator()->CreateInstance(*this);
         _floating_instances.push_back(ci);
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
@@ -88,11 +88,11 @@ ComponentInstance ScopedComponentProvider::ManageInstanceCreation(ComponentDescr
         auto it = _instances.find(description.GetCreator());
         if (it != _instances.end())
         {
-          ComponentInstance ci = it->second;
+          Instance ci = it->second;
           ci.instance = description.GetConverter().Convert(ci.instance);
           return ci;
         }
-        ComponentInstance ci = description.GetCreator()->CreateInstance(*this);
+        Instance ci = description.GetCreator()->CreateInstance(*this);
         _instances[description.GetCreator()] = ci;
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;

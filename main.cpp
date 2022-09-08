@@ -1,5 +1,5 @@
-#include "dependency/application.h"
-#include "dependency/iservice.h"
+#include "application/application.h"
+#include "application/iservice.h"
 
 #include <iostream>
 #include <thread>
@@ -44,9 +44,9 @@ public:
 
 class PrintingService : public IService
 {
-  ComponentProvider& _provider;
+  Provider& _provider;
 public:
-  explicit PrintingService(ComponentProvider& provider)
+  explicit PrintingService(Provider& provider)
    : _provider(provider)
   {
   }
@@ -114,7 +114,7 @@ int main (int argc, char *argv[])
 
     app.Components().AddSingleton<CounterProvider, ICounterProvider>();
 
-    app.Components().AddSingleton<IService>([](ComponentProvider& provider) { return new PrintingService(provider); });
+    app.Components().AddSingleton<IService>([](Provider& provider) { return new PrintingService(provider); });
 
 //    app.Components().AddSingleton<KillingService, IService>();
     app.Components().AddSingleton<IService>(&KillingService::Create);

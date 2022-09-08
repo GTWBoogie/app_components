@@ -1,8 +1,8 @@
 #pragma once
 
-#include "component_instance.h"
-#include "component_description.h"
-#include "component_provider.h"
+#include "instance.h"
+#include "description.h"
+#include "provider.h"
 
 #include "util/tuple.h"
 
@@ -27,10 +27,10 @@ concept Creatable = requires()
   std::is_same<typename boost::callable_traits::return_type<decltype(&T::Create)>::type, T*>::value;
 };
 
-class ComponentRegistry
+class Registry
 {
 public:
-  ComponentRegistry()
+  Registry()
   {
   }
 
@@ -51,9 +51,9 @@ public:
       object_pointer = std::make_shared<std::any>(std::move(object));
     }
 
-    auto creator = ComponentCreator::Create(
-      [object_pointer](ComponentProvider&) {
-        ComponentInstance ci;
+    auto creator = Creator::Create(
+      [object_pointer](Provider&) {
+        Instance ci;
         ci.instance = object_pointer;
         return ci;
       });
@@ -146,9 +146,9 @@ public:
   }
 
 protected:
-  friend class ComponentProvider;
+  friend class Provider;
 
-  std::vector<ComponentDescription>& GetDescriptions(std::type_index type)
+  std::vector<Description>& GetDescriptions(std::type_index type)
   {
     auto it = _descriptions.find(type);
     if (it == _descriptions.end())
@@ -171,7 +171,7 @@ protected:
     }
     else
     {
-      _descriptions[type].push_back(ComponentDescription(lifetime, creator, GetConverter<From, To>()));
+      _descriptions[type].push_back(Description(lifetime, creator, GetConverter<From, To>()));
       std::cout << "Registered interface " << boost::core::demangle(typeid(To).name()) << " for class " << boost::core::demangle(typeid(From).name()) << std::endl;
     }
 
@@ -195,15 +195,15 @@ protected:
   }
 
   template<typename From, typename To>
-  static ComponentConverter GetConverter()
+  static Converter GetConverter()
   {
     if constexpr (std::is_same<From, To>::value)
     {
-      return ComponentConverter([](AnyPtr ptr) { return ptr; });
+      return Converter([](AnyPtr ptr) { return ptr; });
     }
     else
     {
-      return ComponentConverter([](AnyPtr ptr) {
+      return Converter([](AnyPtr ptr) {
         To *to = dynamic_cast<To*>(std::any_cast<From*>(*ptr.get()));
         if (to == nullptr)
         {
@@ -218,8 +218,8 @@ protected:
   template<typename T>
   static ComponentCreatorPtr GetDefaultConstructibleCreator()
   {
-    return ComponentCreator::Create([](ComponentProvider&) {
-      ComponentInstance ci;
+    return Creator::Create([](Provider&) {
+      Instance ci;
       T* object = new T();
       {
         std::cout << "Created object of type " << boost::core::demangle(typeid(T).name()) << " [" << object << "]" << std::endl;
@@ -232,8 +232,8 @@ protected:
   template<typename T>
   static ComponentCreatorPtr GetCreateConstructibleCreator()
   {
-    return ComponentCreator::Create([](ComponentProvider& provider) {
-      ComponentInstance ci;
+    return Creator::Create([](Provider& provider) {
+      Instance ci;
       using Arguments = typename boost::callable_traits::args<decltype(&T::Create)>::type;
       Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
@@ -251,8 +251,8 @@ protected:
   {
     typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
 
-    return ComponentCreator::Create([f](ComponentProvider& provider) {
-      ComponentInstance ci;
+    return Creator::Create([f](Provider& provider) {
+      Instance ci;
       using Arguments = typename boost::callable_traits::args<Callable>::type;
       Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
@@ -266,7 +266,7 @@ protected:
   }
 
   template<typename T>
-  static T CreateArgumentsTuple(ComponentProvider& cp, std::vector<AnyPtr>& dependencies)
+  static T CreateArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
   {
     const size_t size = std::tuple_size<T>::value;
     if constexpr (size == 0)
@@ -293,11 +293,11 @@ protected:
   }
 
   template<typename T>
-  static T MakeArgumentsTuple(ComponentProvider& cp, std::vector<AnyPtr>& dependencies)
+  static T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
   {
     return CreateArgumentsTuple<T>(cp, dependencies);
   }
 
-  std::map<std::type_index, std::vector<ComponentDescription>> _descriptions;
+  std::map<std::type_index, std::vector<Description>> _descriptions;
 };
 
