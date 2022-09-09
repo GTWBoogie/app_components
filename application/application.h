@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dependency/registry.h"
-#include "dependency/provider.h"
+#include "registry/registry.h"
+#include "registry/provider.h"
 #include "application/iapplication.h"
 
 class Application : IApplication

@@ -35,7 +35,7 @@ cc_library(
 )
 
 cc_library(
-    name = "component_registry",
+    name = "registry",
     srcs = [
         "provider.cpp",
     ],

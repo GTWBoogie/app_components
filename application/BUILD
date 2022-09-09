@@ -9,7 +9,7 @@ cc_library(
         "iservice.h",
     ],
     deps = [
-        "//dependency:component_registry",
+        "//registry:registry",
         "//util:stop_token",
     ],
 )
