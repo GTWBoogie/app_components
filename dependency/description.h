@@ -5,14 +5,14 @@
 
 class Description {
 public:
-  Description(Lifetime lifetime, ComponentCreatorPtr creator, Converter converter);
+  Description(Lifetime lifetime, CreatorPtr creator, Converter converter);
 
   Lifetime GetLifetime() const; 
-  ComponentCreatorPtr GetCreator();
+  CreatorPtr GetCreator();
   Converter  GetConverter();
 
 private:
   Lifetime _lifetime;
-  ComponentCreatorPtr _creator;
+  CreatorPtr _creator;
   Converter  _converter;
 };

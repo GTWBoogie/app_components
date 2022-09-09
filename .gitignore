@@ -44,4 +44,4 @@ compile_commands.json
 external
 
 # CLion
-.clwb
+/.clwb/

@@ -1,11 +1,11 @@
 #include "creator.h"
 
-ComponentCreatorPtr Creator::Create(CreateFunction creator)
+CreatorPtr Creator::Create(CreateFunction creator)
 {
-  return ComponentCreatorPtr(new Creator(creator));
+  return CreatorPtr(new Creator(creator));
 }
 
-ComponentCreatorPtr Creator::GetPointer()
+CreatorPtr Creator::GetPointer()
 {
   return shared_from_this();
 }

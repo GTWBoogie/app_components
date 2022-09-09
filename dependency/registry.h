@@ -30,9 +30,7 @@ concept Creatable = requires()
 class Registry
 {
 public:
-  Registry()
-  {
-  }
+  Registry() = default;
 
   template<typename ...Interfaces, typename T>
   void AddInstance(T *object, bool managed = true)
@@ -160,7 +158,7 @@ protected:
   }
 
   template<typename From, typename To, typename ...Other>
-  void Register(Lifetime lifetime, ComponentCreatorPtr creator, bool unique = false)
+  void Register(Lifetime lifetime, CreatorPtr creator, bool unique = false)
   {
     std::type_index type = (typeid(To));
 
@@ -216,7 +214,7 @@ protected:
   }
 
   template<typename T>
-  static ComponentCreatorPtr GetDefaultConstructibleCreator()
+  static CreatorPtr GetDefaultConstructibleCreator()
   {
     return Creator::Create([](Provider&) {
       Instance ci;
@@ -230,7 +228,7 @@ protected:
   }
 
   template<typename T>
-  static ComponentCreatorPtr GetCreateConstructibleCreator()
+  static CreatorPtr GetCreateConstructibleCreator()
   {
     return Creator::Create([](Provider& provider) {
       Instance ci;
@@ -247,7 +245,7 @@ protected:
   }
 
   template<typename Callable>
-  static ComponentCreatorPtr GetCreator(Callable f)
+  static CreatorPtr GetCreator(Callable f)
   {
     typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
 
@@ -266,7 +264,7 @@ protected:
   }
 
   template<typename T>
-  static T CreateArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
+  static T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
   {
     const size_t size = std::tuple_size<T>::value;
     if constexpr (size == 0)
@@ -290,12 +288,6 @@ protected:
 
       return std::tuple_cat(std::tuple<type&>(*std::any_cast<type *>(*instance.instance)), CreateArgumentsTuple<typename util::tuple_trunc<1, T>::type>(cp, dependencies));
     }
-  }
-
-  template<typename T>
-  static T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
-  {
-    return CreateArgumentsTuple<T>(cp, dependencies);
   }
 
   std::map<std::type_index, std::vector<Description>> _descriptions;

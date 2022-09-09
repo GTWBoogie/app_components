@@ -1,6 +1,6 @@
 #include "description.h"
 
-Description::Description(Lifetime lifetime, ComponentCreatorPtr creator, Converter converter)
+Description::Description(Lifetime lifetime, CreatorPtr creator, Converter converter)
  : _lifetime(lifetime)
  , _creator(creator)
  , _converter(converter)
@@ -12,7 +12,7 @@ Lifetime Description::GetLifetime() const
   return _lifetime;
 }
 
-ComponentCreatorPtr Description::GetCreator()
+CreatorPtr Description::GetCreator()
 {
   return _creator;
 }

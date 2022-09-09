@@ -8,16 +8,16 @@
 class Provider;
 
 class Creator;
-using ComponentCreatorPtr = std::shared_ptr<Creator>;
+using CreatorPtr = std::shared_ptr<Creator>;
 
 class Creator : std::enable_shared_from_this<Creator>
 {
 public:
   using CreateFunction = std::function<Instance(Provider&)>;
   
-  [[nodiscard]] static ComponentCreatorPtr Create(CreateFunction creator);
+  [[nodiscard]] static CreatorPtr Create(CreateFunction creator);
 
-  ComponentCreatorPtr GetPointer();
+  CreatorPtr GetPointer();
 
   Instance CreateInstance(Provider& registry);
 

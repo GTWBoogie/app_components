@@ -116,8 +116,8 @@ int main (int argc, char *argv[])
 
     app.Components().AddSingleton<IService>([](Provider& provider) { return new PrintingService(provider); });
 
-//    app.Components().AddSingleton<KillingService, IService>();
-    app.Components().AddSingleton<IService>(&KillingService::Create);
+    app.Components().AddSingleton<KillingService, IService>();
+//    app.Components().AddSingleton<IService>(&KillingService::Create);
 
     app.Components().AddScoped([](Counter& counter) { return new Printer(counter); });
     app.Components().AddTransient([](ICounterProvider& provider) { return new Counter(provider); });

@@ -58,7 +58,7 @@ protected:
 
   std::recursive_mutex _mutex;
   Registry& _registry;
-  std::map<ComponentCreatorPtr, Instance> _instances;
+  std::map<CreatorPtr, Instance> _instances;
   std::vector<Instance> _floating_instances;
 };
 
