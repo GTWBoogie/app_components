@@ -41,7 +41,6 @@ public:
   void DoStuff()
   {
     _logger.Information("Hello! " + std::to_string(_counter.Get()));
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
   }
 };
 
@@ -65,6 +64,7 @@ public:
       auto scope = _provider.GetScope();
       auto& printer = scope.GetInstance<Printer>();
       printer.DoStuff();
+      std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
   }
 
@@ -123,11 +123,8 @@ int main (int argc, char *argv[])
     app.Components().AddSingleton<components::BoostLogger, components::ILogger>();
 
     app.Components().AddSingleton<CounterProvider, ICounterProvider>();
-
     app.Components().AddSingleton<components::IService>([](Provider& provider, components::ILogger& logger) { return new PrintingService(provider, logger); });
-
     app.Components().AddSingleton<KillingService, components::IService>();
-
     app.Components().AddScoped([](Counter& counter, components::ILogger& logger) { return new Printer(counter, logger); });
     app.Components().AddTransient([](ICounterProvider& provider) { return new Counter(provider); });
     app.Run();
