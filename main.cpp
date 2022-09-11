@@ -133,7 +133,7 @@ int main (int argc, char *argv[])
     std::cout << "Err?" << std::endl;
   }
 
-  PrintParams({ .a = 3, .b = false, .c = "ds"});
+  PrintParams({.a = 3, .b = false, .c = "ds"});
 
   return 0;
 }

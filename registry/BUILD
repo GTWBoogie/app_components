@@ -42,6 +42,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":description",
+        "//util:debug_log",
         "//util:demangle",
         "//util:tuple",
         "@boost//:callable_traits",

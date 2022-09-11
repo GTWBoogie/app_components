@@ -5,10 +5,28 @@ cc_library(
     hdrs = ["tuple.h"],
 )
 
+cc_test(
+    name = "tuple_test",
+    srcs = ["tuple_test.cpp"],
+    deps = [
+        ":tuple",
+        "@boost//:test",
+    ],
+)
+
 cc_library(
     name = "stop_token",
     srcs = ["stop_token.cpp"],
     hdrs = ["stop_token.h"],
+)
+
+cc_test(
+    name = "stop_token_test",
+    srcs = ["stop_token_test.cpp"],
+    deps = [
+        ":stop_token",
+        "@boost//:test",
+    ],
 )
 
 cc_library(
@@ -16,4 +34,18 @@ cc_library(
     srcs = ["demangle.cpp"],
     hdrs = ["demangle.h"],
     deps = ["@boost//:core"],
+)
+
+cc_test(
+    name = "demangle_test",
+    srcs = ["demangle_test.cpp"],
+    deps = [
+        ":demangle",
+        "@boost//:test",
+    ],
+)
+
+cc_library(
+    name = "debug_log",
+    hdrs = ["debug_log.h"],
 )

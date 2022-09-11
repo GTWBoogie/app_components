@@ -3,6 +3,7 @@
 #include "converter.h"
 #include "provider.h"
 #include "creator.h"
+#include "util/debug_log.h"
 #include "util/demangle.h"
 #include "util/tuple.h"
 
@@ -10,7 +11,6 @@
 
 #include <any>
 #include <functional>
-#include <iostream>
 #include <typeindex>
 
 namespace detail {
@@ -27,9 +27,7 @@ auto GetDeleter()
 {
   return [](std::any *ptr) {
     ObjectType *pointer = std::any_cast<ObjectType *>(*ptr);
-    {
-      std::cout << "Deleting object of type " << util::get_demangled_type_name<ObjectType>() << " [" << pointer << "]" << std::endl;
-    }
+    DLOG("Deleting object of type " << util::get_demangled_type_name<ObjectType>() << " [" << pointer << "]");
     delete pointer;
     delete ptr;
   };
@@ -80,7 +78,8 @@ T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
     auto instance = cp.GetComponentInstance(std::type_index(typeid(type)));
     dependencies.push_back(instance.instance);
     dependencies.insert(dependencies.end(), instance.dependencies.begin(), instance.dependencies.end());
-    return std::tuple_cat(std::tuple<type&>(*std::any_cast<type *>(*instance.instance)), CreateArgumentsTuple<typename util::tuple_trunc<1, T>::type>(cp, dependencies));
+    return std::tuple_cat(std::tuple<type&>(*std::any_cast<type *>(*instance.instance)),
+            CreateArgumentsTuple<typename util::remove_first_tuple_elements<1, T>::type>(cp, dependencies));
   }
 }
 
@@ -90,9 +89,7 @@ CreatorPtr GetDefaultConstructibleCreator()
   return Creator::Create([](Provider&) {
     Instance ci;
     T* object = new T();
-    {
-      std::cout << "Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]" << std::endl;
-    }
+    DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(object), GetDeleter<T>());
     return ci;
   });
@@ -107,9 +104,7 @@ CreatorPtr GetCreateConstructibleCreator()
     Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
     T* object = std::apply(T::Create, argument_tuple);
-    {
-      std::cout << "Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]" << std::endl;
-    }
+    DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(object), GetDeleter<T>());
     return ci;
   });
@@ -126,9 +121,7 @@ CreatorPtr GetCreator(Callable f)
     Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
     return_type * object = std::apply(f, argument_tuple);
-    {
-      std::cout << "Created object of type " << util::get_demangled_type_name<return_type>() << " [" << object << "]" << std::endl;
-    }
+    DLOG("Created object of type " << util::get_demangled_type_name<return_type>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(std::move(object)), GetDeleter<return_type>());
     return ci;
   });
@@ -137,6 +130,8 @@ CreatorPtr GetCreator(Callable f)
 template<typename T>
 CreatorPtr GetAdaptedObjectCreator(T* object, bool managed = true)
 {
+  DLOG("Adapted object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
+
   AnyPtr object_pointer;
   if (managed)
   {

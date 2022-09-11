@@ -3,10 +3,10 @@
 #include "detail.h"
 #include "description.h"
 
+#include "util/debug_log.h"
 #include "util/demangle.h"
 
 #include <any>
-#include <iostream>
 #include <memory>
 #include <map>
 #include <vector>
@@ -19,10 +19,6 @@ public:
   template<typename ...Interfaces, typename T>
   void AddInstance(T *object, bool managed = true)
   {
-    {
-      std::cout << "Adapted object of type " << util::get_demangled_type_name<T>() << " [" << object << "]" << std::endl;
-    }
-
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed));
   }
 
@@ -162,12 +158,14 @@ protected:
     auto it = _descriptions.find(type);
     if (unique && it != _descriptions.end())
     {
-      std::cout << "Interface " << util::get_demangled_type_name<To>() << " already registered - skipping registering for class " << util::get_demangled_type_name<From>() << std::endl;
+      DLOG("Interface " << util::get_demangled_type_name<To>()
+              << " already registered - skipping registering for class " << util::get_demangled_type_name<From>());
     }
     else
     {
       _descriptions[type].push_back(Description(lifetime, creator, detail::GetConverter<From, To>()));
-      std::cout << "Registered interface " << util::get_demangled_type_name<To>() << " for class " << util::get_demangled_type_name<From>() << std::endl;
+      DLOG("Registered interface " << util::get_demangled_type_name<To>()
+              << " for class " << util::get_demangled_type_name<From>());
     }
 
     if constexpr (sizeof...(Other) > 0)

@@ -1,6 +1,7 @@
 #include "application/application.h"
 
 #include "application/iservice.h"
+#include "util/debug_log.h"
 #include "util/stop_token.h"
 
 #include <thread>
@@ -32,11 +33,13 @@ void Application::Run() {
         service.Start(stop_source.get_token());
       }
       catch (std::exception &ex) {
-        std::cout << "Service error: " << ex.what() << std::endl;
+        // todo: change to logger
+        DLOG("Service error: " << ex.what());
         stop_source.request_stop();
       }
       catch (...) {
-        std::cout << "Service error: unknown" << std::endl;
+        // todo: change to logger
+        DLOG("Service error: unknown");
         stop_source.request_stop();
       }
     });
