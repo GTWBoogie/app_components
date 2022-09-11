@@ -1,7 +1,7 @@
 #include "application/application.h"
 
 #include "components/iservice.h"
-#include "util/debug_log.h"
+#include "components/cout_logger.h"
 #include "util/stop_token.h"
 
 #include <thread>
@@ -9,7 +9,9 @@
 namespace components {
 
 Application::Application(int argc, char *argv[])
-        : _registry(), _provider(_registry) {
+ : _registry()
+ , _provider(_registry)
+{
 }
 
 Registry &Application::Components() {
@@ -23,23 +25,24 @@ void Application::Run() {
   _registry.AddTransient([&stop_source]() { return new util::stop_token(stop_source.get_token()); });
   _registry.AddInstance(&Components(), false);
   _registry.AddInstance(&_provider, false);
+  _registry.TryAddSingleton<COutLogger, ILogger>();
 
   auto services = _provider.GetInstances<components::IService>();
+  auto& logger = _provider.GetInstance<ILogger>();
 
   std::vector<std::thread> threads;
   for (components::IService &service: services) {
-    threads.emplace_back([&service, &stop_source]() {
+    threads.emplace_back([&service, &stop_source, &logger]() {
       try {
         service.Start(stop_source.get_token());
       }
       catch (std::exception &ex) {
-        // todo: change to logger
-        DLOG("Service error: " << ex.what());
+        using namespace std::literals;
+        logger.Error("Service error: "s + ex.what());
         stop_source.request_stop();
       }
       catch (...) {
-        // todo: change to logger
-        DLOG("Service error: unknown");
+        logger.Error("Service error: unknown");
         stop_source.request_stop();
       }
     });

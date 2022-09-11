@@ -22,6 +22,12 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed));
   }
 
+  template<typename ...Interfaces, typename T>
+  void TryAddInstance(T *object, bool managed = true)
+  {
+    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed), true);
+  }
+
   template<typename T, typename ...Interfaces>
   void AddSingleton() requires std::default_initializable<T>
   {

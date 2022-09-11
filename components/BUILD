@@ -14,6 +14,15 @@ cc_library(
 )
 
 cc_library(
+    name = "cout_logger",
+    srcs = ["cout_logger.cpp"],
+    hdrs = ["cout_logger.h"],
+    deps = [
+        "ilogger",
+    ],
+)
+
+cc_library(
     name = "boost_logger",
     srcs = ["boost_logger.cpp"],
     hdrs = ["boost_logger.h"],

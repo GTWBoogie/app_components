@@ -8,6 +8,7 @@ cc_library(
         "iapplication.h",
     ],
     deps = [
+        "//components:cout_logger",
         "//components:iservice",
         "//registry",
         "//util:stop_token",
