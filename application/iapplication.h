@@ -2,7 +2,7 @@
 
 class Registry;
 
-namespace application {
+namespace components {
 
 class IApplication
 {
@@ -11,4 +11,4 @@ public:
   virtual void Run() = 0;
 };
 
-} // namespace application
+} // namespace components

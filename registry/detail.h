@@ -79,7 +79,7 @@ T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
     dependencies.push_back(instance.instance);
     dependencies.insert(dependencies.end(), instance.dependencies.begin(), instance.dependencies.end());
     return std::tuple_cat(std::tuple<type&>(*std::any_cast<type *>(*instance.instance)),
-            CreateArgumentsTuple<typename util::remove_first_tuple_elements<1, T>::type>(cp, dependencies));
+            MakeArgumentsTuple<typename util::remove_first_tuple_elements<1, T>::type>(cp, dependencies));
   }
 }
 

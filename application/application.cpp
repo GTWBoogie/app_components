@@ -1,12 +1,12 @@
 #include "application/application.h"
 
-#include "application/iservice.h"
+#include "components/iservice.h"
 #include "util/debug_log.h"
 #include "util/stop_token.h"
 
 #include <thread>
 
-namespace application {
+namespace components {
 
 Application::Application(int argc, char *argv[])
         : _registry(), _provider(_registry) {
@@ -24,10 +24,10 @@ void Application::Run() {
   _registry.AddInstance(&Components(), false);
   _registry.AddInstance(&_provider, false);
 
-  auto services = _provider.GetInstances<IService>();
+  auto services = _provider.GetInstances<components::IService>();
 
   std::vector<std::thread> threads;
-  for (IService &service: services) {
+  for (components::IService &service: services) {
     threads.emplace_back([&service, &stop_source]() {
       try {
         service.Start(stop_source.get_token());
@@ -50,4 +50,4 @@ void Application::Run() {
   for (std::thread &thread: threads) { thread.join(); }
 }
 
-} // namespace application
+} // namespace components

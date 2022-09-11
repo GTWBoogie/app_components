@@ -6,10 +6,10 @@ cc_library(
     hdrs = [
         "application.h",
         "iapplication.h",
-        "iservice.h",
     ],
     deps = [
-        "//registry:registry",
+        "//components:iservice",
+        "//registry",
         "//util:stop_token",
     ],
 )

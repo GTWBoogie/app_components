@@ -4,7 +4,7 @@
 #include "registry/registry.h"
 #include "registry/provider.h"
 
-namespace application {
+namespace components {
 
 class Application : IApplication {
   Registry _registry;
@@ -18,4 +18,4 @@ public:
   void Run() override;
 };
 
-} // namespace application
+} // namespace components

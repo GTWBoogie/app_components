@@ -2,7 +2,7 @@
 
 #include "util/stop_token.h"
 
-namespace application {
+namespace components {
 
 class IService
 {
@@ -13,4 +13,4 @@ public:
   virtual void Stop(util::stop_token stop_token) = 0;
 };
 
-} // namespace application
+} // namespace components
