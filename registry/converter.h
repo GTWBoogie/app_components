@@ -3,6 +3,7 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <utility>
 
 using AnyPtr = std::shared_ptr<std::any>;
 
@@ -11,11 +12,16 @@ class Converter
 public:
   using ConvertFunction = std::function<AnyPtr(AnyPtr)>;
 
-  Converter(ConvertFunction converter);
+  explicit Converter(ConvertFunction converter)
+    : _converter(std::move(converter))
+  {
+  }
 
-  AnyPtr Convert(AnyPtr instance);
+  AnyPtr Convert(AnyPtr instance)
+  {
+    return _converter(std::move(instance));
+  }
 
 private:
   ConvertFunction _converter;
 };
-

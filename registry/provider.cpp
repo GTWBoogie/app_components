@@ -1,5 +1,6 @@
 #include "provider.h"
 
+#include "description.h"
 #include "registry.h"
 
 Provider::Provider(Registry& registry)
@@ -84,7 +85,6 @@ Instance ScopedProvider::ManageInstanceCreation(Description& description)
       }
     case Lifetime::Scoped:
       {
-      {
         auto it = _instances.find(description.GetCreator());
         if (it != _instances.end())
         {
@@ -96,7 +96,6 @@ Instance ScopedProvider::ManageInstanceCreation(Description& description)
         _instances[description.GetCreator()] = ci;
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
-      }
       }
     case Lifetime::Singleton:
       {

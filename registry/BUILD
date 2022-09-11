@@ -1,53 +1,49 @@
-#package(default_visibility = ["//visibility:public"])
-
 cc_library(
     name = "lifetime",
-    hdrs = ["lifetime.h"]
+    hdrs = ["lifetime.h"],
 )
 
 cc_library(
     name = "instance",
     hdrs = ["instance.h"],
-    deps = [":lifetime"]
 )
 
 cc_library(
     name = "converter",
-    srcs = ["converter.cpp"],
-    hdrs = ["converter.h"]
+    hdrs = ["converter.h"],
 )
 
 cc_library(
     name = "creator",
-    srcs = ["creator.cpp"],
     hdrs = ["creator.h"],
-    deps = [":instance"]
+    deps = [":instance"],
 )
 
 cc_library(
     name = "description",
-    srcs = ["description.cpp"],
     hdrs = ["description.h"],
     deps = [
-        ":creator",
         ":converter",
-    ]
+        ":creator",
+        ":lifetime",
+    ],
 )
 
 cc_library(
     name = "registry",
     srcs = [
+        "detail.h",
         "provider.cpp",
     ],
     hdrs = [
         "provider.h",
         "registry.h",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         ":description",
+        "//util:demangle",
         "//util:tuple",
         "@boost//:callable_traits",
-        "@boost//:core",
     ],
-    visibility = ["//visibility:public"]
 )

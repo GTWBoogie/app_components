@@ -1,6 +1,7 @@
 #include "stop_token.h"
 
 #include <atomic>
+#include <utility>
 
 namespace util {
 
@@ -14,13 +15,8 @@ stop_token::stop_token()
 {
 }
 
-stop_token::stop_token(const stop_token& other)
- : _state(other._state)
-{
-}
-
 stop_token::stop_token(std::shared_ptr<stop_state> state)
- : _state(state)
+ : _state(std::move(state))
 {
 }
 

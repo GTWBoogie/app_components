@@ -1,16 +1,25 @@
 #pragma once
 
-#include "description.h"
 #include "instance.h"
 
-#include <functional>
 #include <map>
 #include <mutex>
 #include <typeindex>
 #include <vector>
 
+class Description;
+class Provider;
 class Registry;
 class ScopedProvider;
+
+class Creator;
+using CreatorPtr = std::shared_ptr<Creator>;
+
+namespace detail {
+
+template<typename T> T MakeArgumentsTuple(Provider&, std::vector<AnyPtr>&);
+
+} // namespace detail
 
 class Provider
 {
@@ -48,8 +57,8 @@ public:
   ScopedProvider GetScope();
 
 protected:
-  friend class Registry;
   friend class ScopedProvider;
+  template<typename T> friend T detail::MakeArgumentsTuple(Provider&, std::vector<AnyPtr>&);
 
   Instance GetComponentInstance(std::type_index type);
   std::vector<Instance> GetComponentInstances(std::type_index type);

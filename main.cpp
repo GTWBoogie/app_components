@@ -42,7 +42,7 @@ public:
   }
 };
 
-class PrintingService : public IService
+class PrintingService : public application::IService
 {
   Provider& _provider;
 public:
@@ -68,7 +68,7 @@ public:
   }
 };
 
-class KillingService : public IService
+class KillingService : public application::IService
 {
   util::stop_source& _source;
 public:
@@ -110,14 +110,13 @@ void PrintParams(const Parameters& params)
 int main (int argc, char *argv[])
 {
   try {
-    Application app(argc, argv);
+    application::Application app(argc, argv);
 
     app.Components().AddSingleton<CounterProvider, ICounterProvider>();
 
-    app.Components().AddSingleton<IService>([](Provider& provider) { return new PrintingService(provider); });
+    app.Components().AddSingleton<application::IService>([](Provider& provider) { return new PrintingService(provider); });
 
-    app.Components().AddSingleton<KillingService, IService>();
-//    app.Components().AddSingleton<IService>(&KillingService::Create);
+    app.Components().AddSingleton<KillingService, application::IService>();
 
     app.Components().AddScoped([](Counter& counter) { return new Printer(counter); });
     app.Components().AddTransient([](ICounterProvider& provider) { return new Counter(provider); });

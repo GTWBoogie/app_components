@@ -1,7 +1,5 @@
 #pragma once
 
-#include "lifetime.h"
-
 #include <any>
 #include <memory>
 #include <vector>

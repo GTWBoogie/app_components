@@ -9,12 +9,12 @@ class stop_state;
 
 class stop_token {
   std::shared_ptr<stop_state> _state;
-  stop_token(std::shared_ptr<stop_state> state);
+  explicit stop_token(std::shared_ptr<stop_state> state);
 
   friend class stop_source;
 public:
   stop_token();
-  stop_token(const stop_token& other);
+  stop_token(const stop_token& other) = default;
 
   [[nodiscard]] bool stop_requested() const noexcept;
   [[nodiscard]] bool stop_possible() const noexcept;
