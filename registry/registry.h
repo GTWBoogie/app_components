@@ -1,18 +1,21 @@
 #pragma once
 
+#include "registry_base.h"
+
+#include "creators.h"
+#include "converters.h"
 #include "detail.h"
 #include "description.h"
 
-#include "util/debug_log.h"
 #include "util/demangle.h"
+#include "registry_base.h"
 
 #include <any>
 #include <memory>
 #include <map>
 #include <vector>
 
-class Registry
-{
+class Registry : public RegistryBase {
 public:
   Registry() = default;
 
@@ -143,43 +146,17 @@ public:
   }
 
 protected:
-  friend class Provider;
-
-  std::vector<Description>& GetDescriptions(std::type_index type)
-  {
-    auto it = _descriptions.find(type);
-    if (it == _descriptions.end())
-    {
-      throw std::invalid_argument(std::string("Object providing interface ") + util::get_demangled_type_name(type.name()) + " not registered");
-    }
-
-    return it->second;
-  }
-
   template<typename From, typename To, typename ...Other>
   void Register(Lifetime lifetime, CreatorPtr creator, bool unique = false)
   {
     std::type_index type = (typeid(To));
 
-    auto it = _descriptions.find(type);
-    if (unique && it != _descriptions.end())
-    {
-      DLOG("Interface " << util::get_demangled_type_name<To>()
-              << " already registered - skipping registering for class " << util::get_demangled_type_name<From>());
-    }
-    else
-    {
-      _descriptions[type].push_back(Description(lifetime, creator, detail::GetConverter<From, To>()));
-      DLOG("Registered interface " << util::get_demangled_type_name<To>()
-              << " for class " << util::get_demangled_type_name<From>());
-    }
+    RegistryBase::Register(lifetime, type, typeid(From), creator, detail::GetConverter<From, To>());
 
     if constexpr (sizeof...(Other) > 0)
     {
       Register<From, Other...>(lifetime, creator, unique);
     }
   }
-
-  std::map<std::type_index, std::vector<Description>> _descriptions;
 };
 

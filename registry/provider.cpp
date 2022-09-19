@@ -1,7 +1,9 @@
 #include "provider.h"
 
+#include "converters.h"
+#include "creators.h"
 #include "description.h"
-#include "registry.h"
+#include "registry_base.h"
 
 namespace {
 
@@ -10,7 +12,7 @@ const std::type_index _providerDefaultTagIndex = std::type_index(typeid(Provider
 
 } // namespace
 
-Provider::Provider(Registry& registry)
+Provider::Provider(RegistryBase& registry)
  : _registry(registry)
 {
 }
@@ -87,7 +89,9 @@ ScopedProvider::ScopedProvider(Provider& parent)
  : Provider(parent._registry)
  , _parent(parent)
 {
-  _registry.AddInstance<Provider>(this, false);
+  _registry.Register(Lifetime::Scoped, typeid(Provider), typeid(Provider),
+                     detail::GetAdaptedObjectCreator(this, false),
+                     detail::GetConverter<ScopedProvider, Provider>(), false);
 }
 
 Instance ScopedProvider::ManageInstanceCreation(Description& description, std::type_index tag)

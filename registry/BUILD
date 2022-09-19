@@ -32,8 +32,12 @@ cc_library(
 cc_library(
     name = "registry",
     srcs = [
+        "converters.h",
+        "creators.h",
         "detail.h",
         "provider.cpp",
+        "registry_base.cpp",
+        "registry_base.h",
     ],
     hdrs = [
         "provider.h",

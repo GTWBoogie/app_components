@@ -8,11 +8,9 @@
 #include <typeindex>
 #include <vector>
 
-#include "util/debug_log.h"
-
 class Description;
 class Provider;
-class Registry;
+class RegistryBase;
 class ScopedProvider;
 
 class Creator;
@@ -30,34 +28,28 @@ using ComponentContainer = std::vector<std::reference_wrapper<T>>;
 class Provider
 {
 public:
-  Provider(Registry& registry);
+  Provider(RegistryBase& registry);
   virtual ~Provider() = default;
 
   template<typename T>
   T& GetInstance()
   {
-    auto type = std::type_index(typeid(T));
-
-    Instance ci = GetComponentInstance(type);
+    Instance ci = GetComponentInstance(typeid(T));
     return *std::any_cast<T*>(*ci.instance.get());
   }
 
   template<TaggedType T>
   T& GetInstance()
   {
-    auto type = std::type_index(typeid(typename T::type));
-    auto tag = std::type_index(typeid(typename T::tag));
-
-    Instance ci = GetComponentInstance(type, tag);
+    Instance ci = GetComponentInstance(typeid(typename T::type), typeid(typename T::tag));
     return T(*std::any_cast<typename T::type*>(*ci.instance.get()));
   }
 
   template<typename T>
   ComponentContainer<T> GetInstances()
   {
-    auto type = std::type_index(typeid(T));
     std::vector<std::reference_wrapper<T>> result;
-    std::vector<Instance> cis = GetComponentInstances(type);
+    std::vector<Instance> cis = GetComponentInstances(typeid(T));
     for (auto& ci : cis)
       result.push_back(*std::any_cast<T*>(*ci.instance.get()));
 
@@ -65,11 +57,10 @@ public:
   }
 
   template<typename T>
-  Tagged<ComponentContainer<T>, typename T::tag> GetInstances()
+  Tagged<ComponentContainer<typename T::type>, typename T::tag> GetInstances()
   {
-    auto type = std::type_index(typeid(typename T::type));
     std::vector<std::reference_wrapper<typename T::type>> result;
-    std::vector<Instance> cis = GetComponentInstances(type, std::type_index(typeid(typename T::tag)));
+    std::vector<Instance> cis = GetComponentInstances(typeid(typename T::type), std::type_index(typeid(typename T::tag)));
     for (auto& ci : cis)
       result.push_back(*std::any_cast<typename T::type*>(*ci.instance.get()));
 
@@ -89,7 +80,7 @@ protected:
   virtual Instance ManageInstanceCreation(Description& description, std::type_index tag);
 
   std::recursive_mutex _mutex;
-  Registry& _registry;
+  RegistryBase& _registry;
   std::map<std::pair<std::type_index, CreatorPtr>, Instance> _instances;
   std::vector<Instance> _floating_instances;
 };
