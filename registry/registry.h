@@ -7,7 +7,6 @@
 #include "detail.h"
 #include "description.h"
 
-#include "util/demangle.h"
 #include "registry_base.h"
 
 #include <any>

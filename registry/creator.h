@@ -6,7 +6,7 @@
 #include <memory>
 #include <utility>
 
-class Provider;
+class ProviderBase;
 
 class Creator;
 using CreatorPtr = std::shared_ptr<Creator>;
@@ -14,13 +14,13 @@ using CreatorPtr = std::shared_ptr<Creator>;
 class Creator : std::enable_shared_from_this<Creator>
 {
 public:
-  using CreateFunction = std::function<Instance(Provider&)>;
+  using CreateFunction = std::function<Instance(ProviderBase&)>;
   
   [[nodiscard]] static CreatorPtr Create(CreateFunction creator) { return CreatorPtr(new Creator(std::move(creator))); }
 
   CreatorPtr GetPointer() { return shared_from_this(); }
 
-  Instance CreateInstance(Provider& registry) { return _creator(registry); }
+  Instance CreateInstance(ProviderBase& registry) { return _creator(registry); }
 
 private:
   explicit Creator(CreateFunction creator)

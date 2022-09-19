@@ -1,15 +1,24 @@
 #pragma once
 
-#include "description.h"
+#include "lifetime.h"
 
-#include <map>
+#include <memory>
 #include <typeindex>
 #include <vector>
 
+class Creator;
+using CreatorPtr = std::shared_ptr<Creator>;
+
+class Converter;
+class Description;
+class ProviderBase;
+class ScopedProvider;
+
 class RegistryBase {
+  struct RegistryBaseState;
 public:
-  RegistryBase() = default;
-  virtual ~RegistryBase() = default;
+  RegistryBase();
+  virtual ~RegistryBase();
 
 protected:
   std::vector<Description>& GetDescriptions(std::type_index type);
@@ -18,8 +27,8 @@ protected:
                 CreatorPtr creator, Converter converter, bool unique = false);
 
 private:
-  friend class Provider;
+  friend class ProviderBase;
   friend class ScopedProvider;
 
-  std::map<std::type_index, std::vector<Description>> _descriptions;
+  std::unique_ptr<RegistryBaseState> _state;
 };

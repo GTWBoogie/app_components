@@ -1,6 +1,6 @@
 #pragma once
 
-#include "provider.h"
+#include "provider_base.h"
 #include "creator.h"
 #include "util/debug_log.h"
 #include "util/demangle.h"
@@ -10,6 +10,8 @@
 #include <any>
 
 namespace detail {
+
+template<typename T> auto MakeArgumentsTuple(ProviderBase&, std::vector<AnyPtr>&);
 
 template<typename T>
 concept Creatable = requires()
@@ -30,7 +32,7 @@ auto GetDeleter() {
 
 template<typename T>
 CreatorPtr GetDefaultConstructibleCreator() {
-  return Creator::Create([](Provider &) {
+  return Creator::Create([](ProviderBase &) {
     Instance ci;
     T *object = new T();
     DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
@@ -41,7 +43,7 @@ CreatorPtr GetDefaultConstructibleCreator() {
 
 template<typename T>
 CreatorPtr GetCreateConstructibleCreator() {
-  return Creator::Create([](Provider &provider) {
+  return Creator::Create([](ProviderBase &provider) {
     DLOG("Will Create object of type " << util::get_demangled_type_name<T>());
     Instance ci;
     using Arguments = typename boost::callable_traits::args<decltype(&T::Create)>::type;
@@ -58,7 +60,7 @@ template<typename Callable>
 CreatorPtr GetCreator(Callable f) {
   typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
 
-  return Creator::Create([f](Provider &provider) {
+  return Creator::Create([f](ProviderBase &provider) {
     Instance ci;
     using Arguments = typename boost::callable_traits::args<Callable>::type;
     auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
@@ -81,7 +83,7 @@ CreatorPtr GetAdaptedObjectCreator(T *object, bool managed = true) {
     object_pointer = std::make_shared<std::any>(std::move(object));
   }
 
-  return Creator::Create([object_pointer](Provider &) {
+  return Creator::Create([object_pointer](ProviderBase &) {
     Instance ci;
     ci.instance = object_pointer;
     return ci;

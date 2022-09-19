@@ -102,7 +102,10 @@ public:
   {
     _logger.Debug("Starting KillingService");
 
-    std::this_thread::sleep_for(std::chrono::seconds(20));
+    size_t counter = 0;
+
+    while (counter++ < 20 && !stop_token.stop_requested()) std::this_thread::sleep_for(std::chrono::seconds(1));
+
     _source.request_stop();
   }
 

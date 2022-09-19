@@ -11,7 +11,7 @@ namespace detail {
 
 template<typename Type>
 struct ComponentInstanceGetter {
-  static Instance Get(Provider& cp)
+  static Instance Get(ProviderBase& cp)
   {
     return cp.GetComponentInstance(std::type_index(typeid(Type)));
   }
@@ -19,7 +19,7 @@ struct ComponentInstanceGetter {
 
 template<TaggedType Type>
 struct ComponentInstanceGetter<Type> {
-  static Instance Get(Provider& cp)
+  static Instance Get(ProviderBase& cp)
   {
     return cp.GetComponentInstance(std::type_index(typeid(typename Type::type)),
                                    std::type_index(typeid(typename Type::tag)));
@@ -44,7 +44,7 @@ struct Referencer<T> {
 };
 
 template<typename T>
-auto MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
+auto MakeArgumentsTuple(ProviderBase& cp, std::vector<AnyPtr>& dependencies)
 {
   // todo: refactor, check cyclic dependencies, accept pointer types, accept vector of types
 

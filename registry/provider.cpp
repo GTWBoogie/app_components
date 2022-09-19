@@ -5,49 +5,9 @@
 #include "description.h"
 #include "registry_base.h"
 
-namespace {
-
-struct ProviderDefaultTag{};
-const std::type_index _providerDefaultTagIndex = std::type_index(typeid(ProviderDefaultTag));
-
-} // namespace
-
 Provider::Provider(RegistryBase& registry)
- : _registry(registry)
+ : ProviderBase(registry)
 {
-}
-
-Instance Provider::GetComponentInstance(std::type_index type)
-{
-  return GetComponentInstance(type, _providerDefaultTagIndex);
-}
-
-Instance Provider::GetComponentInstance(std::type_index type, std::type_index tag)
-{
-  Description& description = _registry.GetDescriptions(type).back();
-
-  std::lock_guard<std::recursive_mutex> lock(_mutex);
-  return ManageInstanceCreation(description, tag);
-}
-
-std::vector<Instance> Provider::GetComponentInstances(std::type_index type)
-{
-  return GetComponentInstances(type, _providerDefaultTagIndex);
-}
-
-std::vector<Instance> Provider::GetComponentInstances(std::type_index type, std::type_index tag)
-{
-  auto& descriptions = _registry.GetDescriptions(type);
-  std::vector<Instance> result;
-  result.reserve(descriptions.size());
-
-  std::lock_guard<std::recursive_mutex> lock(_mutex);
-  for (auto& description : descriptions)
-  {
-    result.push_back(ManageInstanceCreation(description, tag));
-  }
-
-  return result;
 }
 
 Instance Provider::ManageInstanceCreation(Description& description, std::type_index tag)
@@ -57,25 +17,14 @@ Instance Provider::ManageInstanceCreation(Description& description, std::type_in
     case Lifetime::Transient:
       {
         Instance ci = description.GetCreator()->CreateInstance(*this);
-        _floating_instances.push_back(ci);
+        AddFloatingInstance(ci);
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
       }
     case Lifetime::Scoped:
     case Lifetime::Singleton:
       {
-        auto key = std::make_pair(tag, description.GetCreator());
-        auto it = _instances.find(key);
-        if (it != _instances.end())
-        {
-          Instance ci = it->second;
-          ci.instance = description.GetConverter().Convert(ci.instance);
-          return ci;
-        }
-        Instance ci = description.GetCreator()->CreateInstance(*this);
-        _instances[key] = ci;
-        ci.instance = description.GetConverter().Convert(ci.instance);
-        return ci;
+        return GetOrCreateInstance(tag, description);
       }
   }
 }
@@ -101,24 +50,13 @@ Instance ScopedProvider::ManageInstanceCreation(Description& description, std::t
     case Lifetime::Transient:
       {
         Instance ci = description.GetCreator()->CreateInstance(*this);
-        _floating_instances.push_back(ci);
+        AddFloatingInstance(ci);
         ci.instance = description.GetConverter().Convert(ci.instance);
         return ci;
       }
     case Lifetime::Scoped:
       {
-        auto key = std::make_pair(tag, description.GetCreator());
-        auto it = _instances.find(key);
-        if (it != _instances.end())
-        {
-          Instance ci = it->second;
-          ci.instance = description.GetConverter().Convert(ci.instance);
-          return ci;
-        }
-        Instance ci = description.GetCreator()->CreateInstance(*this);
-        _instances[key] = ci;
-        ci.instance = description.GetConverter().Convert(ci.instance);
-        return ci;
+        return GetOrCreateInstance(tag, description);
       }
     case Lifetime::Singleton:
       {

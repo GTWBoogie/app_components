@@ -1,31 +1,19 @@
 #pragma once
 
+#include "provider_base.h"
+
 #include "instance.h"
 #include "tagged_type.h"
-
-#include <map>
-#include <mutex>
-#include <typeindex>
-#include <vector>
 
 class Description;
 class Provider;
 class RegistryBase;
 class ScopedProvider;
 
-class Creator;
-using CreatorPtr = std::shared_ptr<Creator>;
-
-namespace detail {
-
-template<typename T> auto MakeArgumentsTuple(Provider&, std::vector<AnyPtr>&);
-
-} // namespace detail
-
 template<typename T>
 using ComponentContainer = std::vector<std::reference_wrapper<T>>;
 
-class Provider
+class Provider : public ProviderBase
 {
 public:
   Provider(RegistryBase& registry);
@@ -68,21 +56,10 @@ public:
   }
   ScopedProvider GetScope();
 
-  Instance GetComponentInstance(std::type_index type);
-  Instance GetComponentInstance(std::type_index type, std::type_index tag);
-
 protected:
   friend class ScopedProvider;
 
-  std::vector<Instance> GetComponentInstances(std::type_index type);
-  std::vector<Instance> GetComponentInstances(std::type_index type, std::type_index tag);
-
-  virtual Instance ManageInstanceCreation(Description& description, std::type_index tag);
-
-  std::recursive_mutex _mutex;
-  RegistryBase& _registry;
-  std::map<std::pair<std::type_index, CreatorPtr>, Instance> _instances;
-  std::vector<Instance> _floating_instances;
+  Instance ManageInstanceCreation(Description& description, std::type_index tag) override;
 };
 
 class ScopedProvider : public Provider

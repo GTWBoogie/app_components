@@ -30,26 +30,69 @@ cc_library(
 )
 
 cc_library(
-    name = "registry",
-    srcs = [
-        "converters.h",
-        "creators.h",
-        "detail.h",
-        "provider.cpp",
-        "registry_base.cpp",
-        "registry_base.h",
-    ],
-    hdrs = [
-        "provider.h",
-        "registry.h",
-        "tagged_type.h",
-    ],
-    visibility = ["//visibility:public"],
+    name = "registry_base",
+    srcs = ["registry_base.cpp"],
+    hdrs = ["registry_base.h"],
     deps = [
         ":description",
         "//util:debug_log",
         "//util:demangle",
-        "//util:tuple",
+    ],
+)
+
+cc_library(
+    name = "provider_base",
+    srcs = ["provider_base.cpp"],
+    hdrs = ["provider_base.h"],
+    deps = [":registry_base"],
+)
+
+cc_library(
+    name = "tagged_type",
+    hdrs = ["tagged_type.h"],
+)
+
+cc_library(
+    name = "converters",
+    hdrs = ["converters.h"],
+    deps = [
+        ":converter",
+        ":tagged_type",
+        "//util:demangle",
+    ],
+)
+
+cc_library(
+    name = "creators",
+    hdrs = ["creators.h"],
+    deps = [
+        ":creator",
+        ":provider_base",
         "@boost//:callable_traits",
+    ],
+)
+
+cc_library(
+    name = "provider",
+    srcs = ["provider.cpp"],
+    hdrs = ["provider.h"],
+    deps = [
+        ":converters",
+        ":creators",
+    ],
+)
+
+cc_library(
+    name = "registry",
+    srcs = [
+        "detail.h",
+    ],
+    hdrs = [
+        "registry.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":provider",
+        "//util:tuple",
     ],
 )
