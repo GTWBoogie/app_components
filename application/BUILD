@@ -10,6 +10,7 @@ cc_library(
     deps = [
         "//components:cout_logger",
         "//components:iservice",
+        "//components:signal_handler",
         "//registry",
         "//util:stop_token",
     ],

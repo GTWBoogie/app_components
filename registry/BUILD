@@ -38,6 +38,7 @@ cc_library(
     hdrs = [
         "provider.h",
         "registry.h",
+        "tagged_type.h",
     ],
     visibility = ["//visibility:public"],
     deps = [

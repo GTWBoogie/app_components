@@ -31,3 +31,10 @@ cc_library(
         "@boost//:log",
     ],
 )
+
+cc_library(
+    name = "signal_handler",
+    srcs = ["signal_handler.cpp"],
+    hdrs = ["signal_handler.h"],
+    deps = ["//util:stop_token"],
+)

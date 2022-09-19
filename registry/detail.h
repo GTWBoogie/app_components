@@ -34,13 +34,8 @@ auto GetDeleter()
 }
 
 template<typename From, typename To>
-Converter GetConverter()
-{
-  if constexpr (std::is_same<From, To>::value)
-  {
-    return Converter([](const AnyPtr& ptr) { return ptr; });
-  }
-  else
+struct ConverterCreator {
+  static Converter Create()
   {
     return Converter([](const AnyPtr& ptr) {
       To *to = dynamic_cast<To*>(std::any_cast<From*>(*ptr.get()));
@@ -52,10 +47,75 @@ Converter GetConverter()
       return AnyPtr(new std::any(to));
     });
   }
+};
+
+template<typename From>
+struct ConverterCreator<From, From> {
+  static Converter Create()
+  {
+    return Converter([](const AnyPtr& ptr) { return ptr; });
+  }
+};
+
+template<typename From, TaggedType To>
+struct ConverterCreator<From, To> {
+  static Converter Create()
+  {
+    return Converter([](const AnyPtr& ptr) {
+      typename To::type *to = dynamic_cast<typename To::type*>(std::any_cast<From*>(*ptr.get()));
+      if (to == nullptr)
+      {
+        throw std::invalid_argument(std::string("Object of type " + util::get_demangled_type_name<From>() +
+                                                " does not provide interface ") +
+                                                util::get_demangled_type_name<typename To::type>());
+      }
+      return AnyPtr(new std::any(to));
+    });
+  }
+};
+
+template<typename From, typename To>
+Converter GetConverter()
+{
+  return ConverterCreator<From, To>::Create();
 }
 
+template<typename Type>
+struct ComponentInstanceGetter {
+  static Instance Get(Provider& cp)
+  {
+    return cp.GetComponentInstance(std::type_index(typeid(Type)));
+  }
+};
+
+template<TaggedType Type>
+struct ComponentInstanceGetter<Type> {
+  static Instance Get(Provider& cp)
+  {
+    return cp.GetComponentInstance(std::type_index(typeid(typename Type::type)),
+                                   std::type_index(typeid(typename Type::tag)));
+  }
+};
+
 template<typename T>
-T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
+struct Referencer {
+  static std::tuple<T&> Get(AnyPtr& ptr)
+  {
+    return std::tuple<T&>(*std::any_cast<T*>(*ptr));
+  }
+};
+
+template<TaggedType T>
+struct Referencer<T> {
+  static std::tuple<T> Get(AnyPtr& ptr)
+  {
+    T wrapped(*std::any_cast<typename T::type*>(*ptr));
+    return std::tuple<T&>(wrapped);
+  }
+};
+
+template<typename T>
+auto MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
 {
   // todo: refactor, check cyclic dependencies, accept pointer types, accept vector of types
 
@@ -67,18 +127,18 @@ T MakeArgumentsTuple(Provider& cp, std::vector<AnyPtr>& dependencies)
   else if constexpr (size == 1)
   {
     typedef typename std::remove_reference<typename std::tuple_element<0, T>::type>::type type;
-    auto instance = cp.GetComponentInstance(std::type_index(typeid(type)));
+    auto instance = ComponentInstanceGetter<type>::Get(cp);
     dependencies.push_back(instance.instance);
     dependencies.insert(dependencies.end(), instance.dependencies.begin(), instance.dependencies.end());
-    return T(*std::any_cast<type *>(*instance.instance));
+    return Referencer<type>::Get(instance.instance);
   }
   else
   {
     typedef typename std::remove_reference<typename std::tuple_element<0, T>::type>::type type;
-    auto instance = cp.GetComponentInstance(std::type_index(typeid(type)));
+    auto instance = ComponentInstanceGetter<type>::Get(cp);
     dependencies.push_back(instance.instance);
     dependencies.insert(dependencies.end(), instance.dependencies.begin(), instance.dependencies.end());
-    return std::tuple_cat(std::tuple<type&>(*std::any_cast<type *>(*instance.instance)),
+    return std::tuple_cat(Referencer<type>::Get(instance.instance),
             MakeArgumentsTuple<typename util::remove_first_tuple_elements<1, T>::type>(cp, dependencies));
   }
 }
@@ -99,9 +159,10 @@ template<typename T>
 CreatorPtr GetCreateConstructibleCreator()
 {
   return Creator::Create([](Provider& provider) {
+    DLOG("Will Create object of type " << util::get_demangled_type_name<T>());
     Instance ci;
     using Arguments = typename boost::callable_traits::args<decltype(&T::Create)>::type;
-    Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
+    auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
     T* object = std::apply(T::Create, argument_tuple);
     DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
@@ -118,7 +179,7 @@ CreatorPtr GetCreator(Callable f)
   return Creator::Create([f](Provider& provider) {
     Instance ci;
     using Arguments = typename boost::callable_traits::args<Callable>::type;
-    Arguments argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
+    auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
 
     return_type * object = std::apply(f, argument_tuple);
     DLOG("Created object of type " << util::get_demangled_type_name<return_type>() << " [" << object << "]");

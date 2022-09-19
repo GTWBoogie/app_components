@@ -36,6 +36,7 @@ public:
    : _counter(counter)
    , _logger(logger)
   {
+    _logger.Trace(std::string("Printer Logger address ") + std::to_string(size_t (&_logger)));
   }
 
   void DoStuff()
@@ -50,10 +51,16 @@ class PrintingService : public components::IService
   components::ILogger& _logger;
 
 public:
-  explicit PrintingService(Provider& provider, components::ILogger& logger)
+  explicit PrintingService(Provider& provider, Tagged<components::ILogger, PrintingService>& logger)
    : _provider(provider)
-   , _logger(logger)
+   , _logger(logger.Value())
   {
+    _logger.Trace(std::string("PrintingService Logger address ") + std::to_string(size_t (&_logger)));
+  }
+
+  static PrintingService* Create(Provider& provider, Tagged<components::ILogger, PrintingService>& logger)
+  {
+    return new PrintingService(provider, logger);
   }
 
   void Start(util::stop_token stop_token) override
@@ -83,6 +90,7 @@ public:
    : _source(source)
    , _logger(logger)
   {
+    _logger.Trace(std::string("KillingService Logger address ") + std::to_string(size_t (&_logger)));
   }
 
   static KillingService* Create(util::stop_source& source, components::ILogger& logger)
@@ -94,7 +102,7 @@ public:
   {
     _logger.Debug("Starting KillingService");
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(20));
     _source.request_stop();
   }
 
@@ -104,26 +112,14 @@ public:
   }
 };
 
-struct Parameters {
-    int a;
-    bool b;
-    std::string c;
-};
-
-void PrintParams(const Parameters& params)
-{
-  std::cout << params.a << " " << params.b << " " << params.c << std::endl;
-}
-
 int main (int argc, char *argv[])
 {
   try {
     components::Application app(argc, argv);
 
     app.Components().AddSingleton<components::BoostLogger, components::ILogger>();
-
     app.Components().AddSingleton<CounterProvider, ICounterProvider>();
-    app.Components().AddSingleton<components::IService>([](Provider& provider, components::ILogger& logger) { return new PrintingService(provider, logger); });
+    app.Components().AddSingleton<PrintingService, components::IService>();
     app.Components().AddSingleton<KillingService, components::IService>();
     app.Components().AddScoped([](Counter& counter, components::ILogger& logger) { return new Printer(counter, logger); });
     app.Components().AddTransient([](ICounterProvider& provider) { return new Counter(provider); });
@@ -139,8 +135,6 @@ int main (int argc, char *argv[])
   {
     std::cout << "Err?" << std::endl;
   }
-
-  PrintParams({.a = 3, .b = false, .c = "ds"});
 
   return 0;
 }

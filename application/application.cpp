@@ -1,7 +1,8 @@
 #include "application/application.h"
 
-#include "components/iservice.h"
 #include "components/cout_logger.h"
+#include "components/iservice.h"
+#include "components/signal_handler.h"
 #include "util/stop_token.h"
 
 #include <thread>
@@ -22,6 +23,7 @@ void Application::Run() {
   util::stop_source stop_source;
 
   _registry.AddInstance(&stop_source, false);
+  _registry.AddInstance(new components::SignalHandler(stop_source));
   _registry.AddTransient([&stop_source]() { return new util::stop_token(stop_source.get_token()); });
   _registry.AddInstance(&Components(), false);
   _registry.AddInstance(&_provider, false);
