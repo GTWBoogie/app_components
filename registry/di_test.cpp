@@ -21,7 +21,7 @@ struct CreatableBase {
 };
 
 struct CreatableStruct : public CreatableBase {
-  CreatableStruct(int i)  { instances += i; }
+  explicit CreatableStruct(int i)  { instances += i; }
   ~CreatableStruct() { instances -= 1; }
 
   static CreatableStruct* Create() { return new CreatableStruct(1); }
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_unmanaged)
     Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
   }
 
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_unmanaged)
 BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_managed)
 {
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
-  DefaultInitializableStruct* bs = new DefaultInitializableStruct();
+  auto* bs = new DefaultInitializableStruct();
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
 
   {
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_managed)
     Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
   }
 
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
@@ -77,10 +77,10 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_unmana
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs1, false);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs2, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created == &bs2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
   }
@@ -91,9 +91,9 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_unmana
 BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_managed)
 {
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
-  DefaultInitializableStruct* bs1 = new DefaultInitializableStruct();
+  auto* bs1 = new DefaultInitializableStruct();
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
-  DefaultInitializableStruct* bs2 = new DefaultInitializableStruct();
+  auto* bs2 = new DefaultInitializableStruct();
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
@@ -102,10 +102,10 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_manage
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created == bs2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
   }
@@ -127,10 +127,10 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_un
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs1, false);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs2, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created == &bs1);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 1);
   }
@@ -141,9 +141,9 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_un
 BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_managed)
 {
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
-  DefaultInitializableStruct* bs1 = new DefaultInitializableStruct();
+  auto* bs1 = new DefaultInitializableStruct();
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
-  DefaultInitializableStruct* bs2 = new DefaultInitializableStruct();
+  auto* bs2 = new DefaultInitializableStruct();
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
@@ -152,10 +152,10 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_ma
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created == bs1);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
   }
@@ -172,12 +172,12 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_singleton)
     Provider provider(registry);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
   }
@@ -196,12 +196,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_singleton)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -221,12 +221,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_singleton)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -246,12 +246,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_singleton_factor
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -271,12 +271,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_singleton_fa
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -296,12 +296,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_singleton)
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddSingleton<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -321,12 +321,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_singleton
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddSingleton<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -344,12 +344,12 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_scoped)
     Provider provider(registry);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
   }
@@ -368,12 +368,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_scoped)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -393,12 +393,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_scoped)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -418,12 +418,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_scoped_factory)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -443,12 +443,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_scoped_facto
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -468,12 +468,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_scoped)
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddScoped<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 2);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &multiple[1].get());
@@ -493,12 +493,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_scoped)
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddScoped<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(&created1 == &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() == &created1);
@@ -516,12 +516,12 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_transient)
     Provider provider(registry);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 3);
     BOOST_TEST(multiple.size() == 1);
   }
@@ -540,12 +540,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_transient)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 4);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &created1);
@@ -569,12 +569,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_transient)
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 3);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() != &created1);
@@ -595,12 +595,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_transient_factor
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 4);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &created1);
@@ -624,12 +624,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_transient_fa
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
-    DefaultInitializableStruct &created1 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
-    DefaultInitializableStruct &created2 = provider.GetInstance<DefaultInitializableStruct>();
+    auto &created2 = provider.GetInstance<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<DefaultInitializableStruct> multiple = provider.GetInstances<DefaultInitializableStruct>();
+    auto multiple = provider.GetInstances<DefaultInitializableStruct>();
     BOOST_TEST(DefaultInitializableStruct::instances == 3);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() != &created1);
@@ -650,12 +650,12 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_transient)
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddTransient<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 4);
     BOOST_TEST(multiple.size() == 2);
     BOOST_TEST(&multiple[0].get() != &created1);
@@ -679,12 +679,12 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_transient
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddTransient<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
-    CreatableStruct &created1 = provider.GetInstance<CreatableStruct>();
+    auto &created1 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 1);
-    CreatableStruct &created2 = provider.GetInstance<CreatableStruct>();
+    auto &created2 = provider.GetInstance<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 2);
     BOOST_TEST(&created1 != &created2);
-    ComponentContainer<CreatableStruct> multiple = provider.GetInstances<CreatableStruct>();
+    auto multiple = provider.GetInstances<CreatableStruct>();
     BOOST_TEST(CreatableStruct::instances == 3);
     BOOST_TEST(multiple.size() == 1);
     BOOST_TEST(&multiple[0].get() != &created1);
