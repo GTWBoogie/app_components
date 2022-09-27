@@ -98,7 +98,7 @@ cc_library(
 )
 
 cc_test(
-    name = "di_test",
-    srcs = ["di_test.cpp"],
+    name = "instance_creation_test",
+    srcs = ["instance_creation_test.cpp"],
     deps = [":registry"],
 )

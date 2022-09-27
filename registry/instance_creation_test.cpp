@@ -1,7 +1,7 @@
 #include "provider.h"
 #include "registry.h"
 
-#define BOOST_TEST_MODULE di tests
+#define BOOST_TEST_MODULE instance creation tests
 #include <boost/test/included/unit_test.hpp>
 
 #pragma clang diagnostic push
