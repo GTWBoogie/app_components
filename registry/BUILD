@@ -96,3 +96,9 @@ cc_library(
         "//util:tuple",
     ],
 )
+
+cc_test(
+    name = "di_test",
+    srcs = ["di_test.cpp"],
+    deps = [":registry"],
+)

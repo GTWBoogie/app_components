@@ -141,7 +141,7 @@ protected:
   {
     std::type_index type = (typeid(To));
 
-    RegistryBase::Register(lifetime, type, typeid(From), creator, detail::GetConverter<From, To>());
+    RegistryBase::Register(lifetime, type, typeid(From), creator, detail::GetConverter<From, To>(), unique);
 
     if constexpr (sizeof...(Other) > 0)
     {
