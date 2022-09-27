@@ -22,11 +22,11 @@ Registry &Application::Components() {
 void Application::Run() {
   util::stop_source stop_source;
 
-  _registry.AddInstance(&stop_source, false);
-  _registry.AddInstance(new components::SignalHandler(stop_source));
-  _registry.AddTransient([&stop_source]() { return new util::stop_token(stop_source.get_token()); });
-  _registry.AddInstance(&Components(), false);
-  _registry.AddInstance(&_provider, false);
+  _registry.AddInstance<util::stop_source>(&stop_source, false);
+  _registry.AddInstance<components::SignalHandler>(new components::SignalHandler(stop_source));
+  _registry.AddTransient<util::stop_token>([&stop_source]() { return new util::stop_token(stop_source.get_token()); });
+  _registry.AddInstance<Registry>(&Components(), false);
+  _registry.AddInstance<Provider>(&_provider, false);
   _registry.TryAddSingleton<COutLogger, ILogger>();
 
   auto services = _provider.GetInstances<components::IService>();

@@ -124,8 +124,8 @@ int main (int argc, char *argv[])
     app.Components().AddSingleton<CounterProvider, ICounterProvider>();
     app.Components().AddSingleton<PrintingService, components::IService>();
     app.Components().AddSingleton<KillingService, components::IService>();
-    app.Components().AddScoped([](Counter& counter, components::ILogger& logger) { return new Printer(counter, logger); });
-    app.Components().AddTransient([](ICounterProvider& provider) { return new Counter(provider); });
+    app.Components().AddScoped<Printer>([](Counter& counter, components::ILogger& logger) { return new Printer(counter, logger); });
+    app.Components().AddTransient<Counter>([](ICounterProvider& provider) { return new Counter(provider); });
     app.Run();
 
     std::cout << "Success!" << std::endl;

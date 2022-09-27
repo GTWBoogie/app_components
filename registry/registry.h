@@ -9,22 +9,19 @@
 
 #include "registry_base.h"
 
-#include <any>
-#include <memory>
-#include <map>
-#include <vector>
+#include <boost/callable_traits.hpp>
 
 class Registry : public RegistryBase {
 public:
   Registry() = default;
 
-  template<typename ...Interfaces, typename T>
+  template<typename T, typename ...Interfaces>
   void AddInstance(T *object, bool managed = true)
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed));
   }
 
-  template<typename ...Interfaces, typename T>
+  template<typename T, typename ...Interfaces>
   void TryAddInstance(T *object, bool managed = true)
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed), true);
@@ -42,11 +39,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCreateConstructibleCreator<T>());
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void AddSingleton(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void AddSingleton(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Singleton, detail::GetCreator(f));
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCallableCreator(f));
   }
 
   template<typename T, typename ...Interfaces>
@@ -61,11 +57,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCreateConstructibleCreator<T>(), true);
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void TryAddSingleton(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void TryAddSingleton(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Singleton, detail::GetCreator(f), true);
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCallableCreator(f), true);
   }
 
   template<typename T, typename ...Interfaces>
@@ -80,11 +75,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCreateConstructibleCreator<T>());
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void AddScoped(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void AddScoped(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Scoped, detail::GetCreator(f));
+    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCallableCreator(f));
   }
 
   template<typename T, typename ...Interfaces>
@@ -99,11 +93,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCreateConstructibleCreator<T>(), true);
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void TryAddScoped(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void TryAddScoped(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Scoped, detail::GetCreator(f), true);
+    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCallableCreator(f), true);
   }
 
   template<typename T, typename ...Interfaces>
@@ -118,11 +111,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCreateConstructibleCreator<T>());
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void AddTransient(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void AddTransient(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Transient, detail::GetCreator(f));
+    Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCallableCreator(f));
   }
 
   template<typename T, typename ...Interfaces>
@@ -137,11 +129,10 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCreateConstructibleCreator<T>(), true);
   }
 
-  template<typename ...Interfaces, typename Callable>
-  void TryAddTransient(Callable f)
+  template<typename T, typename ...Interfaces, typename Callable>
+  void TryAddTransient(Callable f) requires detail::TypeCreator<T, Callable>
   {
-    typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
-    Register<return_type, return_type, Interfaces...>(Lifetime::Transient, detail::GetCreator(f), true);
+    Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCallableCreator(f), true);
   }
 
 protected:

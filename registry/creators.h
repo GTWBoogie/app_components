@@ -20,6 +20,12 @@ concept Creatable = requires()
   std::is_same<typename boost::callable_traits::return_type<decltype(&T::Create)>::type, T*>::value;
 };
 
+template<typename T, typename Callable>
+concept TypeCreator = requires()
+{
+  std::is_same<T, typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type>::value;
+};
+
 template<typename ObjectType>
 auto GetDeleter() {
   return [](std::any *ptr) {
@@ -57,7 +63,7 @@ CreatorPtr GetCreateConstructibleCreator() {
 }
 
 template<typename Callable>
-CreatorPtr GetCreator(Callable f) {
+CreatorPtr GetCallableCreator(Callable f) {
   typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
 
   return Creator::Create([f](ProviderBase &provider) {
