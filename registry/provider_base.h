@@ -21,7 +21,7 @@ class ProviderBase {
   struct ProviderBaseState;
 
 public:
-  ProviderBase(RegistryBase& registry);
+  explicit ProviderBase(RegistryBase& registry);
   virtual ~ProviderBase();
 
 protected:

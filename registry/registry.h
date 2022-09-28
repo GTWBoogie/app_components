@@ -18,13 +18,13 @@ public:
   template<typename T, typename ...Interfaces>
   void AddInstance(T *object, bool managed = true)
   {
-    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed));
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(object, managed));
   }
 
   template<typename T, typename ...Interfaces>
   void TryAddInstance(T *object, bool managed = true)
   {
-    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetAdaptedObjectCreator(object, managed), true);
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(object, managed), true);
   }
 
   template<typename T, typename ...Interfaces>

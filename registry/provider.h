@@ -16,8 +16,8 @@ using ComponentContainer = std::vector<std::reference_wrapper<T>>;
 class Provider : public ProviderBase
 {
 public:
-  Provider(RegistryBase& registry);
-  virtual ~Provider() = default;
+  explicit Provider(RegistryBase& registry);
+  ~Provider() override = default;
 
   template<typename T>
   T& GetInstance()
@@ -27,10 +27,10 @@ public:
   }
 
   template<TaggedType T>
-  T& GetInstance()
+  T GetInstance()
   {
     Instance ci = GetComponentInstance(typeid(typename T::type), typeid(typename T::tag));
-    return T(*std::any_cast<typename T::type*>(*ci.instance.get()));
+    return T(**std::any_cast<typename T::type*>(ci.instance.get()));
   }
 
   template<typename T>

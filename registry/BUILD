@@ -102,3 +102,9 @@ cc_test(
     srcs = ["instance_creation_test.cpp"],
     deps = [":registry"],
 )
+
+cc_test(
+    name = "instance_scope_test",
+    srcs = ["instance_scope_test.cpp"],
+    deps = [":registry"],
+)
