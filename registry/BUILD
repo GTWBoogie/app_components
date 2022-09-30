@@ -85,6 +85,8 @@ cc_library(
 cc_library(
     name = "registry",
     srcs = [
+        "dependencies.cpp",
+        "dependencies.h",
         "detail.h",
     ],
     hdrs = [
@@ -106,5 +108,11 @@ cc_test(
 cc_test(
     name = "instance_scope_test",
     srcs = ["instance_scope_test.cpp"],
+    deps = [":registry"],
+)
+
+cc_test(
+    name = "dependency_injection_test",
+    srcs = ["dependency_injection_test.cpp"],
     deps = [":registry"],
 )

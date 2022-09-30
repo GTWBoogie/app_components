@@ -36,7 +36,7 @@ public:
   template<typename T>
   ComponentContainer<T> GetInstances()
   {
-    std::vector<std::reference_wrapper<T>> result;
+    ComponentContainer<T> result;
     std::vector<Instance> cis = GetComponentInstances(typeid(T));
     for (auto& ci : cis)
       result.push_back(*std::any_cast<T*>(*ci.instance.get()));
@@ -47,7 +47,7 @@ public:
   template<typename T>
   Tagged<ComponentContainer<typename T::type>, typename T::tag> GetInstances()
   {
-    std::vector<std::reference_wrapper<typename T::type>> result;
+    ComponentContainer<typename T::type> result;
     std::vector<Instance> cis = GetComponentInstances(typeid(typename T::type), std::type_index(typeid(typename T::tag)));
     for (auto& ci : cis)
       result.push_back(*std::any_cast<typename T::type*>(*ci.instance.get()));
