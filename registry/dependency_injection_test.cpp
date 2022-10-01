@@ -3,6 +3,7 @@
 
 #define BOOST_TEST_MODULE dependency injection tests
 #include <boost/test/included/unit_test.hpp>
+#include <utility>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
@@ -106,13 +107,13 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_tagged_singletons)
 
 struct StructWithOneDependencyVector {
   explicit StructWithOneDependencyVector(ComponentContainer<StructWithoutDependencies> dep)
-   : _dependency(dep)
+   : _dependency(std::move(dep))
   {
   }
 
   static StructWithOneDependencyVector* Create(ComponentContainer<StructWithoutDependencies> dep)
   {
-    return new StructWithOneDependencyVector(dep);
+    return new StructWithOneDependencyVector(std::move(dep));
   }
 
   ComponentContainer<StructWithoutDependencies> _dependency;
@@ -148,13 +149,13 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_creation_transients)
 
 struct StructWithOneDependencyVectorTagged {
   explicit StructWithOneDependencyVectorTagged(Tagged<ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
-   : _dependency(dep.Value())
+   : _dependency(std::move(dep.Value()))
   {
   }
 
   static StructWithOneDependencyVectorTagged* Create(Tagged<ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
   {
-    return new StructWithOneDependencyVectorTagged(dep);
+    return new StructWithOneDependencyVectorTagged(std::move(dep));
   }
 
   ComponentContainer<StructWithoutDependencies> _dependency;
@@ -168,6 +169,7 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_tagged_creation_singleton
   registry.AddSingleton<StructWithOneDependencyVector>();
   registry.AddSingleton<StructWithOneDependencyVectorTagged>();
   registry.AddSingleton<StructWithoutDependencies>();
+  registry.AddSingleton<StructWithoutDependencies>();
 
   auto &created1 = provider.GetInstance<StructWithOneDependencyVectorTagged>();
   auto &created2 = provider.GetInstance<StructWithOneDependencyVectorTagged>();
@@ -175,10 +177,16 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_tagged_creation_singleton
   auto &created4 = provider.GetInstance<StructWithOneDependencyVector>();
 
   BOOST_TEST(&created1 == &created2);
-  BOOST_TEST(created1._dependency.size() == 1);
+  BOOST_TEST(created1._dependency.size() == 2);
+  BOOST_TEST(&created1._dependency.front().get() != &created1._dependency.back().get());
   BOOST_TEST(&created3 == &created4);
-  BOOST_TEST(created3._dependency.size() == 1);
+  BOOST_TEST(created3._dependency.size() == 2);
+  BOOST_TEST(&created3._dependency.front().get() != &created3._dependency.back().get());
+
   BOOST_TEST(&created1._dependency.front().get() != &created3._dependency.front().get());
+  BOOST_TEST(&created1._dependency.front().get() != &created3._dependency.back().get());
+  BOOST_TEST(&created1._dependency.back().get() != &created3._dependency.back().get());
+  BOOST_TEST(&created1._dependency.back().get() != &created3._dependency.front().get());
 }
 
 #pragma clang diagnostic pop
