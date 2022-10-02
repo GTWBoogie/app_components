@@ -38,3 +38,21 @@ cc_library(
     hdrs = ["signal_handler.h"],
     deps = ["//util:stop_token"],
 )
+
+cc_library(
+    name = "ievent_dispatcher",
+    hdrs = ["ievent_dispatcher.h"],
+)
+
+cc_library(
+    name = "sync_event_dispatcher",
+    srcs = ["sync_event_dispatcher.cpp"],
+    hdrs = ["sync_event_dispatcher.h"],
+    deps = [":ievent_dispatcher"],
+)
+
+cc_test(
+    name = "event_dispatcher_test",
+    srcs = ["event_dispatcher_test.cpp"],
+    deps = [":sync_event_dispatcher"],
+)
