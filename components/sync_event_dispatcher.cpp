@@ -30,8 +30,11 @@ size_t SyncEventDispatcher::Register(std::type_index type, std::function<void(co
 void SyncEventDispatcher::Emit(std::type_index type, const std::any &event)
 {
   std::shared_lock<std::shared_mutex> lock(_state->mutex);
-  for (auto &handler : _state->handlers[type])
-    handler(event);
+  auto it = _state->handlers.find(type);
+  if (it != _state->handlers.end()) {
+    for (auto &handler: it->second)
+      handler(event);
+  }
 }
 
 } // namespace components
