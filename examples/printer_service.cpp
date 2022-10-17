@@ -104,7 +104,7 @@ public:
 
     size_t counter = 0;
 
-    while (counter++ < 20 && !stop_token.stop_requested()) std::this_thread::sleep_for(std::chrono::seconds(1));
+    while (counter++ < 100 && !stop_token.stop_requested()) std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     _source.request_stop();
   }

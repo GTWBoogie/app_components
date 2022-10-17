@@ -82,7 +82,7 @@ struct Referencer<T> {
 template<typename T>
 auto MakeArgumentsTuple(ProviderBase& cp, std::vector<AnyPtr>& dependencies)
 {
-  // todo: refactor, check cyclic dependencies, accept pointer types, accept vector of types
+  // todo: refactor, check cyclic dependencies, accept pointer types
 
   const size_t size = std::tuple_size<T>::value;
   if constexpr (size == 0)

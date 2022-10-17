@@ -2,6 +2,8 @@
 
 #include <memory>
 
+// TODO: make it work with std::stop_token on GCC, implement better one for CLang
+
 namespace util {
 
 class stop_source;

@@ -166,8 +166,8 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_tagged_creation_singleton
   Registry registry;
   Provider provider(registry);
 
-  registry.AddSingleton<StructWithOneDependencyVector>();
-  registry.AddSingleton<StructWithOneDependencyVectorTagged>();
+  registry.AddTransient<StructWithOneDependencyVector>();
+  registry.AddTransient<StructWithOneDependencyVectorTagged>();
   registry.AddSingleton<StructWithoutDependencies>();
   registry.AddSingleton<StructWithoutDependencies>();
 
@@ -176,12 +176,16 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_tagged_creation_singleton
   auto &created3 = provider.GetInstance<StructWithOneDependencyVector>();
   auto &created4 = provider.GetInstance<StructWithOneDependencyVector>();
 
-  BOOST_TEST(&created1 == &created2);
+  BOOST_TEST(&created1 != &created2);
   BOOST_TEST(created1._dependency.size() == 2);
   BOOST_TEST(&created1._dependency.front().get() != &created1._dependency.back().get());
-  BOOST_TEST(&created3 == &created4);
+  BOOST_TEST(&created1._dependency.front().get() == &created2._dependency.front().get());
+  BOOST_TEST(&created1._dependency.back().get() == &created2._dependency.back().get());
+  BOOST_TEST(&created3 != &created4);
   BOOST_TEST(created3._dependency.size() == 2);
   BOOST_TEST(&created3._dependency.front().get() != &created3._dependency.back().get());
+  BOOST_TEST(&created3._dependency.front().get() == &created4._dependency.front().get());
+  BOOST_TEST(&created3._dependency.back().get() == &created4._dependency.back().get());
 
   BOOST_TEST(&created1._dependency.front().get() != &created3._dependency.front().get());
   BOOST_TEST(&created1._dependency.front().get() != &created3._dependency.back().get());
