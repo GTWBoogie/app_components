@@ -13,7 +13,8 @@ public:
   ~SyncEventDispatcher();
 
 protected:
-  size_t Register(std::type_index type, std::function<void(const std::any &)> function) override;
+  IEventDispatcher::HandlerHandle Register(std::type_index type, std::function<void(const std::any &)> function) override;
+  bool Unregister(HandlerHandle handler_handle) override;
   void Emit(std::type_index type, const std::any &event) override;
 
 private:

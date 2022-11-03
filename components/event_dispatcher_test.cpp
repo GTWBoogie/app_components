@@ -24,12 +24,12 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_one_type)
 
   components::SyncEventDispatcher dispatcher;
 
-  dispatcher.RegisterHandler<EventA>(
+  auto handler1 = dispatcher.RegisterHandler<EventA>(
           [&processed](const EventA& event) {
             processed.push_back(std::string("EventA1-") + std::to_string(event.id));
           });
 
-  dispatcher.RegisterHandler<EventA>(
+  auto handler2 = dispatcher.RegisterHandler<EventA>(
           [&processed](const EventA& event) {
             processed.push_back(std::string("EventA2-") + std::to_string(event.id));
           });
@@ -47,6 +47,20 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_one_type)
   BOOST_TEST(processed.size() == 4);
   BOOST_TEST(contains(processed, "EventA1-2"));
   BOOST_TEST(contains(processed, "EventA2-2"));
+
+  dispatcher.UnregisterHandler(handler1);
+
+  dispatcher.EmitEvent(EventA{.id = 3});
+
+  BOOST_TEST(processed.size() == 5);
+  BOOST_TEST(!contains(processed, "EventA1-3"));
+  BOOST_TEST(contains(processed, "EventA2-3"));
+
+  dispatcher.UnregisterHandler(handler2);
+
+  dispatcher.EmitEvent(EventA{.id = 4});
+
+  BOOST_TEST(processed.size() == 5);
 }
 
 struct EventB {
