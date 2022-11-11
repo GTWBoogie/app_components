@@ -43,6 +43,7 @@ CreatorPtr GetDefaultConstructibleCreator() {
     T *object = new T();
     DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(object), GetDeleter<T>());
+    ci.real_instance = ci.instance;
     return ci;
   });
 }
@@ -58,6 +59,7 @@ CreatorPtr GetCreateConstructibleCreator() {
     T *object = std::apply(T::Create, argument_tuple);
     DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(object), GetDeleter<T>());
+    ci.real_instance = ci.instance;
     return ci;
   });
 }
@@ -74,6 +76,7 @@ CreatorPtr GetCallableCreator(Callable f) {
     return_type *object = std::apply(f, argument_tuple);
     DLOG("Created object of type " << util::get_demangled_type_name<return_type>() << " [" << object << "]");
     ci.instance = AnyPtr(new std::any(std::move(object)), GetDeleter<return_type>());
+    ci.real_instance = ci.instance;
     return ci;
   });
 }
@@ -92,6 +95,7 @@ CreatorPtr GetAdaptedObjectCreator(T *object, bool managed = true) {
   return Creator::Create([object_pointer](ProviderBase &) {
     Instance ci;
     ci.instance = object_pointer;
+    ci.real_instance = ci.instance;
     return ci;
   });
 }

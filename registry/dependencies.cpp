@@ -3,6 +3,7 @@
 bool AddDependencies(std::vector<AnyPtr>& dependencies, Instance& instance)
 {
   dependencies.push_back(instance.instance);
+  dependencies.push_back(instance.real_instance);
   dependencies.insert(dependencies.end(), instance.dependencies.begin(), instance.dependencies.end());
   return true;
 }
