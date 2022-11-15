@@ -27,14 +27,35 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(object, managed), true);
   }
 
+  // TODO: Add tests
   template<typename T, typename ...Interfaces>
-  void AddSingleton() requires std::default_initializable<T>
+  void AddInstance(T& object)
+  {
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(&object, false));
+  }
+
+  // TODO: Add tests
+  template<typename T, typename ...Interfaces>
+  void TryAddInstance(T& object)
+  {
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(object, false), true);
+  }
+
+  template<std::default_initializable T, typename ...Interfaces>
+  void AddSingleton()
   {
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetDefaultConstructibleCreator<T>());
   }
 
-  template<typename T, typename ...Interfaces>
-  void AddSingleton() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void AddSingleton()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetConstructorExposedConstructibleCreator<T>());
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void AddSingleton() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCreateConstructibleCreator<T>());
   }
@@ -45,14 +66,21 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCallableCreator(f));
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddSingleton() requires std::default_initializable<T>
+  template<std::default_initializable T, typename ...Interfaces>
+  void TryAddSingleton()
   {
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetDefaultConstructibleCreator<T>(), true);
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddSingleton() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void TryAddSingleton()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetConstructorExposedConstructibleCreator<T>(), true);
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void TryAddSingleton() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCreateConstructibleCreator<T>(), true);
   }
@@ -63,14 +91,21 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetCallableCreator(f), true);
   }
 
-  template<typename T, typename ...Interfaces>
-  void AddScoped() requires std::default_initializable<T>
+  template<std::default_initializable T, typename ...Interfaces>
+  void AddScoped()
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetDefaultConstructibleCreator<T>());
   }
 
-  template<typename T, typename ...Interfaces>
-  void AddScoped() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void AddScoped()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetConstructorExposedConstructibleCreator<T>());
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void AddScoped() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCreateConstructibleCreator<T>());
   }
@@ -81,14 +116,21 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCallableCreator(f));
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddScoped() requires std::default_initializable<T>
+  template<std::default_initializable T, typename ...Interfaces>
+  void TryAddScoped()
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetDefaultConstructibleCreator<T>(), true);
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddScoped() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void TryAddScoped()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetConstructorExposedConstructibleCreator<T>(), true);
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void TryAddScoped() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCreateConstructibleCreator<T>(), true);
   }
@@ -99,14 +141,21 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Scoped, detail::GetCallableCreator(f), true);
   }
 
-  template<typename T, typename ...Interfaces>
-  void AddTransient() requires std::default_initializable<T>
+  template<std::default_initializable T, typename ...Interfaces>
+  void AddTransient()
   {
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetDefaultConstructibleCreator<T>());
   }
 
-  template<typename T, typename ...Interfaces>
-  void AddTransient() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void AddTransient()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetConstructorExposedConstructibleCreator<T>());
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void AddTransient() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCreateConstructibleCreator<T>());
   }
@@ -117,14 +166,21 @@ public:
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCallableCreator(f));
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddTransient() requires std::default_initializable<T>
+  template<std::default_initializable T, typename ...Interfaces>
+  void TryAddTransient()
   {
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetDefaultConstructibleCreator<T>(), true);
   }
 
-  template<typename T, typename ...Interfaces>
-  void TryAddTransient() requires detail::Creatable<T>
+  // TODO: Add tests
+  template<detail::ConstructorExposed T, typename ...Interfaces>
+  void TryAddTransient()
+  {
+    Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetConstructorExposedConstructibleCreator<T>(), true);
+  }
+
+  template<detail::Creatable T, typename ...Interfaces>
+  void TryAddTransient() requires (!detail::ConstructorExposed<T>)
   {
     Register<T, T, Interfaces...>(Lifetime::Transient, detail::GetCreateConstructibleCreator<T>(), true);
   }

@@ -9,9 +9,19 @@
 
 #include <any>
 
+#ifndef CONSTRUCTOR
+  #define CONSTRUCTOR(signature) using Constructor = signature; signature
+#endif
+
 namespace detail {
 
 template<typename T> auto MakeArgumentsTuple(ProviderBase&, std::vector<AnyPtr>&);
+
+template<typename T>
+concept ConstructorExposed = requires()
+{
+  std::is_same<typename boost::callable_traits::return_type<typename T::Constructor>::type, T>::value;
+};
 
 template<typename T>
 concept Creatable = requires()
@@ -39,6 +49,7 @@ auto GetDeleter() {
 template<typename T>
 CreatorPtr GetDefaultConstructibleCreator() {
   return Creator::Create([](ProviderBase &) {
+    DLOG("Will Create object of type " << util::get_demangled_type_name<T>() << " [Default constructor]");
     Instance ci;
     T *object = new T();
     DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
@@ -48,10 +59,30 @@ CreatorPtr GetDefaultConstructibleCreator() {
   });
 }
 
-template<typename T>
+template<ConstructorExposed T>
+CreatorPtr GetConstructorExposedConstructibleCreator() {
+  return Creator::Create([](ProviderBase &provider) {
+    DLOG("Will Create object of type " << util::get_demangled_type_name<T>() << " [Exposed constructor]");
+    Instance ci;
+    using Arguments = typename boost::callable_traits::args<typename T::Constructor>::type;
+    auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
+
+    auto call_constructor = [](auto& ...Args){
+      return new T(Args...);
+    };
+
+    T *object = std::apply(call_constructor, argument_tuple);
+    DLOG("Created object of type " << util::get_demangled_type_name<T>() << " [" << object << "]");
+    ci.instance = AnyPtr(new std::any(object), GetDeleter<T>());
+    ci.real_instance = ci.instance;
+    return ci;
+  });
+}
+
+template<Creatable T>
 CreatorPtr GetCreateConstructibleCreator() {
   return Creator::Create([](ProviderBase &provider) {
-    DLOG("Will Create object of type " << util::get_demangled_type_name<T>());
+    DLOG("Will Create object of type " << util::get_demangled_type_name<T>() << " [Create function]");
     Instance ci;
     using Arguments = typename boost::callable_traits::args<decltype(&T::Create)>::type;
     auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);
@@ -69,6 +100,7 @@ CreatorPtr GetCallableCreator(Callable f) {
   typedef typename std::remove_pointer<typename boost::callable_traits::return_type<Callable>::type>::type return_type;
 
   return Creator::Create([f](ProviderBase &provider) {
+    DLOG("Will Create object of type " << util::get_demangled_type_name<return_type>() << " [Factory function]");
     Instance ci;
     using Arguments = typename boost::callable_traits::args<Callable>::type;
     auto argument_tuple = MakeArgumentsTuple<Arguments>(provider, ci.dependencies);

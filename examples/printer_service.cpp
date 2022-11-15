@@ -86,16 +86,11 @@ class KillingService : public components::IService
   util::stop_source& _source;
   components::ILogger& _logger;
 public:
-  explicit KillingService(util::stop_source& source, components::ILogger& logger)
+  CONSTRUCTOR(KillingService(util::stop_source& source, components::ILogger& logger))
    : _source(source)
    , _logger(logger)
   {
     _logger.Trace(std::string("KillingService Logger address ") + std::to_string(size_t (&_logger)));
-  }
-
-  static KillingService* Create(util::stop_source& source, components::ILogger& logger)
-  {
-    return new KillingService(source, logger);
   }
 
   void Start(util::stop_token stop_token) override
