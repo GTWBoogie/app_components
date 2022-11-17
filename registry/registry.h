@@ -5,11 +5,6 @@
 #include "creators.h"
 #include "converters.h"
 #include "detail.h"
-#include "description.h"
-
-#include "registry_base.h"
-
-#include <boost/callable_traits.hpp>
 
 class Registry : public RegistryBase {
 public:
