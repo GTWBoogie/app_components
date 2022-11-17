@@ -21,13 +21,25 @@ struct CreatableBase {
 };
 
 struct CreatableStruct : public CreatableBase {
-  explicit CreatableStruct(int i)  { instances += i; }
+  explicit CreatableStruct()  { instances += 1; }
   ~CreatableStruct() { instances -= 1; }
 
-  static CreatableStruct* Create() { return new CreatableStruct(1); }
+  static CreatableStruct* Create() { return new CreatableStruct(); }
   static size_t instances;
 };
 size_t CreatableStruct::instances = 0;
+
+struct ConstructorExposedBase {
+};
+
+struct ConstructorExposedStruct : public ConstructorExposedBase {
+  // constructor needs parameter otherwise std::default_initializable version will be used
+  CONSTRUCTOR(ConstructorExposedStruct(int i))  { instances += i; }
+  ~ConstructorExposedStruct() { instances -= 1; }
+
+  static size_t instances;
+};
+size_t ConstructorExposedStruct::instances = 0;
 
 BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_unmanaged)
 {
@@ -402,6 +414,58 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_singleton
   BOOST_TEST(CreatableStruct::instances == 0);
 }
 
+BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_singleton)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.AddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.AddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(&created1 == &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 2);
+    BOOST_TEST(multiple.size() == 2);
+    BOOST_TEST(&multiple[0].get() != &multiple[1].get());
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+}
+
+BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct_singleton)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.TryAddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.TryAddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(&created1 == &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(multiple.size() == 1);
+    BOOST_TEST(&multiple[0].get() == &created1);
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+}
+
 BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_scoped)
 {
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
@@ -572,6 +636,58 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_scoped)
   }
 
   BOOST_TEST(CreatableStruct::instances == 0);
+}
+
+BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_scoped)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.AddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.AddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(&created1 == &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 2);
+    BOOST_TEST(multiple.size() == 2);
+    BOOST_TEST(&multiple[0].get() != &multiple[1].get());
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+}
+
+BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct_scoped)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.TryAddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.TryAddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(&created1 == &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    BOOST_TEST(multiple.size() == 1);
+    BOOST_TEST(&multiple[0].get() == &created1);
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
 }
 
 BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_transient)
@@ -759,6 +875,63 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_transient
   }
 
   BOOST_TEST(CreatableStruct::instances == 0);
+}
+
+BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_transient)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.AddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.AddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 2);
+    BOOST_TEST(&created1 != &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 4);
+    BOOST_TEST(multiple.size() == 2);
+    BOOST_TEST(&multiple[0].get() != &created1);
+    BOOST_TEST(&multiple[0].get() != &created2);
+    BOOST_TEST(&multiple[1].get() != &created1);
+    BOOST_TEST(&multiple[1].get() != &created2);
+    BOOST_TEST(&multiple[0].get() != &multiple[1].get());
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+}
+
+BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct_transient)
+{
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
+
+  {
+    Registry registry;
+    int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
+    Provider provider(registry);
+    registry.TryAddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    registry.TryAddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 0);
+    auto &created1 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 1);
+    auto &created2 = provider.GetInstance<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 2);
+    BOOST_TEST(&created1 != &created2);
+    auto multiple = provider.GetInstances<ConstructorExposedStruct>();
+    BOOST_TEST(ConstructorExposedStruct::instances == 3);
+    BOOST_TEST(multiple.size() == 1);
+    BOOST_TEST(&multiple[0].get() != &created1);
+    BOOST_TEST(&multiple[0].get() != &created2);
+  }
+
+  BOOST_TEST(ConstructorExposedStruct::instances == 0);
 }
 
 #pragma clang diagnostic pop

@@ -116,3 +116,9 @@ cc_test(
     srcs = ["dependency_injection_test.cpp"],
     deps = [":registry"],
 )
+
+cc_test(
+    name = "creation_method_precedence_test",
+    srcs = ["creation_method_precedence_test.cpp"],
+    deps = [":registry"],
+)
