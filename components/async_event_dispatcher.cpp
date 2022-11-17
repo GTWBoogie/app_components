@@ -1,7 +1,8 @@
 #include "async_event_dispatcher.h"
 
+#include "util/lockless_lifo_queue.h"
+
 #include <chrono>
-#include <condition_variable>
 #include <map>
 #include <mutex>
 #include <shared_mutex>
@@ -20,12 +21,7 @@ struct ASyncEventDispatcher::ASyncEventDispatcherState {
   std::map<std::type_index, std::vector<std::function<void(const std::any &)>>> handlers;
   std::shared_mutex handlers_mutex;
 
-  // TODO: stupid implementation - replace vector with lockless queue and remove mutex
-  std::vector<EventType> event_queue;
-  std::mutex queue_mutex;
-
-  std::condition_variable condition;
-  std::mutex condition_mutex;
+  util::LocklessLIFOQueue<EventType> event_queue;
 
   std::thread thread;
 };
@@ -35,42 +31,23 @@ ASyncEventDispatcher::ASyncEventDispatcher(util::stop_token stop_token)
  , _state(std::make_unique<ASyncEventDispatcherState>())
 {
   _state->thread = std::thread([this, stop_token]() {
-
-    auto process_events = [this](const std::vector<EventType>& queue) {
-      for (auto& [type, event] : queue)
-      {
-        auto it = _state->handlers.find(type);
-        if (it != _state->handlers.end()) {
-          for (auto &handler: it->second)
-            handler(event);
-        }
-      }
+    auto process_events = [this](const EventType& event_type) {
+      auto it = _state->handlers.find(event_type.first);
+      if (it != _state->handlers.end())
+        for (auto &handler: it->second)
+          handler(event_type.second);
     };
 
     while(!stop_token.stop_requested())
     {
-      std::vector<EventType> queue_copy;
-      std::unique_lock<std::mutex> condition_lock(_state->condition_mutex);
-      if (_state->condition.wait_for(condition_lock, std::chrono::microseconds(1)) == std::cv_status::no_timeout ||
-          !_state->event_queue.empty())
-      {
-        if (_state->event_queue.empty())
-          continue;
-
-        {
-          std::unique_lock<std::mutex> queue_lock(_state->queue_mutex);
-          queue_copy.swap(_state->event_queue);
-          _state->event_queue.reserve(queue_copy.capacity());
-        }
-
+      std::this_thread::yield();
+      while (!_state->event_queue.empty()) {
         std::shared_lock<std::shared_mutex> handlers_lock(_state->handlers_mutex);
-        process_events(queue_copy);
+        _state->event_queue.consume_all(process_events);
       }
     }
-
     std::shared_lock<std::shared_mutex> handlers_lock(_state->handlers_mutex);
-    std::unique_lock<std::mutex> queue_lock(_state->queue_mutex);
-    process_events(_state->event_queue);
+    _state->event_queue.consume_all(process_events);
   });
 }
 
@@ -100,11 +77,7 @@ bool ASyncEventDispatcher::Unregister(HandlerHandle handler_handle)
 
 void ASyncEventDispatcher::Emit(std::type_index type, const std::any &event)
 {
-  {
-    std::unique_lock<std::mutex> lock(_state->queue_mutex);
-    _state->event_queue.emplace_back(type, event);
-  }
-  _state->condition.notify_one();
+  _state->event_queue.push({type, event});
 }
 
 } // namespace components

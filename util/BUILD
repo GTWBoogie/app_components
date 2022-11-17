@@ -49,3 +49,14 @@ cc_library(
     name = "debug_log",
     hdrs = ["debug_log.h"],
 )
+
+cc_library(
+    name = "lockless_lifo_queue",
+    srcs = ["lockless_lifo_queue.h"],
+)
+
+cc_test(
+    name = "lockless_lifo_queue_test",
+    srcs = ["lockless_lifo_queue_test.cpp"],
+    deps = [":lockless_lifo_queue"],
+)

@@ -57,6 +57,7 @@ cc_library(
     hdrs = ["async_event_dispatcher.h"],
     deps = [
         ":ievent_dispatcher",
+        "//util:lockless_lifo_queue",
         "//util:stop_token",
     ],
 )
