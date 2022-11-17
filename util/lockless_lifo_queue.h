@@ -23,7 +23,7 @@ public:
 
   void push(T item)
   {
-    using allocator_traits = std::allocator_traits<decltype(_allocator)>;
+    using allocator_traits = typename std::allocator_traits<decltype(_allocator)>::template rebind_traits<Node<T>>;
     value_type* new_node = allocator_traits::allocate(_allocator, 1);
     new((void *) new_node) value_type ({ nullptr, item });
 
@@ -41,7 +41,7 @@ public:
     {
       value_type* next = it->_next;
       func(it->item);
-      using allocator_traits = std::allocator_traits<decltype(_allocator)>;
+      using allocator_traits = typename std::allocator_traits<decltype(_allocator)>::template rebind_traits<Node<T>>;
       allocator_traits::deallocate(_allocator, it, 1);
       it = next;
     };
