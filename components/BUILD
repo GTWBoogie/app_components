@@ -51,8 +51,21 @@ cc_library(
     deps = [":ievent_dispatcher"],
 )
 
+cc_library(
+    name = "async_event_dispatcher",
+    srcs = ["async_event_dispatcher.cpp"],
+    hdrs = ["async_event_dispatcher.h"],
+    deps = [
+        ":ievent_dispatcher",
+        "//util:stop_token",
+    ],
+)
+
 cc_test(
     name = "event_dispatcher_test",
     srcs = ["event_dispatcher_test.cpp"],
-    deps = [":sync_event_dispatcher"],
+    deps = [
+        ":async_event_dispatcher",
+        ":sync_event_dispatcher",
+    ],
 )
