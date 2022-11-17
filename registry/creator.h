@@ -4,21 +4,18 @@
 
 #include <functional>
 #include <memory>
-#include <utility>
 
 class ProviderBase;
 
 class Creator;
 using CreatorPtr = std::shared_ptr<Creator>;
 
-class Creator : std::enable_shared_from_this<Creator>
+class Creator
 {
 public:
   using CreateFunction = std::function<Instance(ProviderBase&)>;
   
   [[nodiscard]] static CreatorPtr Create(CreateFunction creator) { return CreatorPtr(new Creator(std::move(creator))); }
-
-  CreatorPtr GetPointer() { return shared_from_this(); }
 
   Instance CreateInstance(ProviderBase& registry) { return _creator(registry); }
 
