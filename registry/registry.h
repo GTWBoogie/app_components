@@ -38,7 +38,7 @@ public:
   template<typename T, typename ...Interfaces>
   void TryAddInstance(T& object)
   {
-    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(object, false), true);
+    Register<T, T, Interfaces...>(Lifetime::Singleton, detail::GetAdaptedObjectCreator(&object, false), true);
   }
 
   template<std::default_initializable T, typename ...Interfaces>
