@@ -5,7 +5,7 @@
 #include <shared_mutex>
 #include <vector>
 
-namespace components {
+namespace ac::components {
 
 struct SyncEventDispatcher::SyncEventDispatcherState {
   std::map<std::type_index, std::vector<std::function<void(const std::any &)>>> handlers;
@@ -49,4 +49,4 @@ void SyncEventDispatcher::Emit(std::type_index type, const std::any &event)
   }
 }
 
-} // namespace components
+} // namespace ac::components

@@ -3,7 +3,7 @@
 #include <atomic>
 #include <utility>
 
-namespace util {
+namespace ac::util {
 
 class stop_state {
 public:
@@ -56,5 +56,5 @@ bool stop_source::request_stop() noexcept
   return !previous;
 }
 
-} // namespace util
+} // namespace ac::util
 

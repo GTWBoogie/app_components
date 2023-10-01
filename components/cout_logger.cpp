@@ -9,7 +9,7 @@ std::mutex cout_lock;
 
 } // namespace
 
-namespace components {
+namespace ac::components {
 
 void COutLogger::Trace(const std::string &msg) {
   if (!ShouldLog(Level::Trace)) return;
@@ -47,4 +47,4 @@ void COutLogger::Fatal(const std::string &msg) {
   std::cout << "[Fatal] " << msg << std::endl;
 }
 
-} // components
+} // ac::components

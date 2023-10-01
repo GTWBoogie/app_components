@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_unmanaged)
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     auto &created = provider.GetInstance<DefaultInitializableStruct>();
@@ -65,8 +65,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_unmanaged_by_ref
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     auto &created = provider.GetInstance<DefaultInitializableStruct>();
@@ -82,8 +82,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_instance_managed)
   BOOST_TEST(DefaultInitializableStruct::instances == 1);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
     auto &created = provider.GetInstance<DefaultInitializableStruct>();
@@ -101,8 +101,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_unmana
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs1, false);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs2, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
@@ -126,8 +126,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_unmana
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_multiple_simple_struct_instances_manage
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.AddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
@@ -176,8 +176,8 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_un
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs1, false);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(&bs2, false);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
@@ -201,8 +201,8 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_un
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 2);
@@ -226,8 +226,8 @@ BOOST_AUTO_TEST_CASE(try_register_and_create_multiple_simple_struct_instances_ma
   BOOST_TEST(DefaultInitializableStruct::instances == 2);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs1);
     registry.TryAddInstance<DefaultInitializableStruct, DefaultInitializableBase>(bs2);
     BOOST_TEST(DefaultInitializableStruct::instances == 1);
@@ -247,8 +247,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_singleton)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
@@ -269,8 +269,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_singleton)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -294,8 +294,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_singleton)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -319,8 +319,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_singleton_factor
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -344,8 +344,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_singleton_fa
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddSingleton<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -369,8 +369,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_singleton)
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddSingleton<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddSingleton<CreatableStruct, CreatableBase>();
@@ -394,8 +394,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_singleton
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddSingleton<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddSingleton<CreatableStruct, CreatableBase>();
@@ -419,9 +419,9 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_sin
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.AddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.AddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
@@ -445,9 +445,9 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.TryAddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.TryAddSingleton<ConstructorExposedStruct, ConstructorExposedBase>();
@@ -471,8 +471,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_scoped)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
@@ -493,8 +493,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_scoped)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -518,8 +518,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_scoped)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -543,8 +543,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_scoped_factory)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -568,8 +568,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_scoped_facto
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddScoped<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -593,8 +593,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_scoped)
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddScoped<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddScoped<CreatableStruct, CreatableBase>();
@@ -618,8 +618,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_scoped)
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddScoped<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddScoped<CreatableStruct, CreatableBase>();
@@ -643,9 +643,9 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_sco
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.AddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.AddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
@@ -669,9 +669,9 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.TryAddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.TryAddScoped<ConstructorExposedStruct, ConstructorExposedBase>();
@@ -695,8 +695,8 @@ BOOST_AUTO_TEST_CASE(register_and_create_simple_struct_transient)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     auto &created1 = provider.GetInstance<DefaultInitializableStruct>();
@@ -717,8 +717,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_transient)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -746,8 +746,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_transient)
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>();
@@ -772,8 +772,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_simple_struct_transient_factor
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.AddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -801,8 +801,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_simple_struct_transient_fa
   BOOST_TEST(DefaultInitializableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
     BOOST_TEST(DefaultInitializableStruct::instances == 0);
     registry.TryAddTransient<DefaultInitializableStruct, DefaultInitializableBase>([]{ return new DefaultInitializableStruct; });
@@ -827,8 +827,8 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_creatable_struct_transient)
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.AddTransient<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.AddTransient<CreatableStruct, CreatableBase>();
@@ -856,8 +856,8 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_creatable_struct_transient
   BOOST_TEST(CreatableStruct::instances == 0);
 
   {
-    Registry registry;
-    Provider provider(registry);
+    ac::registry::Registry registry;
+    ac::registry::Provider provider(registry);
     registry.TryAddTransient<CreatableStruct, CreatableBase>();
     BOOST_TEST(CreatableStruct::instances == 0);
     registry.TryAddTransient<CreatableStruct, CreatableBase>();
@@ -882,9 +882,9 @@ BOOST_AUTO_TEST_CASE(register_multiple_and_create_constructor_exposed_struct_tra
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.AddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.AddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
@@ -912,9 +912,9 @@ BOOST_AUTO_TEST_CASE(try_register_multiple_and_create_constructor_exposed_struct
   BOOST_TEST(ConstructorExposedStruct::instances == 0);
 
   {
-    Registry registry;
+    ac::registry::Registry registry;
     int i = 1; registry.AddInstance<int>(i); // add int so we call exposed constructor
-    Provider provider(registry);
+    ac::registry::Provider provider(registry);
     registry.TryAddTransient<ConstructorExposedStruct, ConstructorExposedBase>();
     BOOST_TEST(ConstructorExposedStruct::instances == 0);
     registry.TryAddTransient<ConstructorExposedStruct, ConstructorExposedBase>();

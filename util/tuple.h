@@ -1,8 +1,9 @@
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 
-namespace util {
+namespace ac::util {
 
 template<size_t N, typename Tuple_Type>
 struct remove_first_tuple_elements {
@@ -21,5 +22,5 @@ struct remove_first_tuple_elements<0, std::tuple<Head, Tail...>>
   typedef std::tuple<Head, Tail...> type;
 };
 
-} // namespace util
+} // namespace ac::util
 

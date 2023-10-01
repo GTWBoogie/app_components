@@ -1,5 +1,7 @@
 #include "dependencies.h"
 
+namespace ac::registry {
+
 bool AddDependencies(std::vector<AnyPtr>& dependencies, Instance& instance)
 {
   dependencies.push_back(instance.instance);
@@ -17,3 +19,5 @@ bool AddDependencies(std::vector<AnyPtr>& dependencies, std::vector<Instance>& i
   }
   return true;
 }
+
+} // namespace ac::registry

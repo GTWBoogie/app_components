@@ -12,8 +12,8 @@ struct StructWithoutDependencies {};
 
 BOOST_AUTO_TEST_CASE(no_dependencies_struct_creation)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddSingleton<StructWithoutDependencies>();
 
@@ -34,8 +34,8 @@ struct StructWithOneDependency {
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_singletons)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddSingleton<StructWithOneDependency>([](StructWithoutDependencies& dep) { return new StructWithOneDependency(dep); });
   registry.AddSingleton<StructWithoutDependencies>();
@@ -49,8 +49,8 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_singletons)
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_transients)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddTransient<StructWithOneDependency>([](StructWithoutDependencies& dep) { return new StructWithOneDependency(dep); });
   registry.AddSingleton<StructWithoutDependencies>();
@@ -63,12 +63,12 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_transients)
 }
 
 struct StructWithOneDependencyTagged1 {
-  explicit StructWithOneDependencyTagged1(Tagged<StructWithoutDependencies, StructWithOneDependencyTagged1>& dep)
+  explicit StructWithOneDependencyTagged1(ac::registry::Tagged<StructWithoutDependencies, StructWithOneDependencyTagged1>& dep)
           : _dependency(dep.Value())
   {
   }
 
-  static StructWithOneDependencyTagged1* Create(Tagged<StructWithoutDependencies, StructWithOneDependencyTagged1>& dep)
+  static StructWithOneDependencyTagged1* Create(ac::registry::Tagged<StructWithoutDependencies, StructWithOneDependencyTagged1>& dep)
   {
     return new StructWithOneDependencyTagged1(dep);
   }
@@ -77,12 +77,12 @@ struct StructWithOneDependencyTagged1 {
 };
 
 struct StructWithOneDependencyTagged2 {
-  explicit StructWithOneDependencyTagged2(Tagged<StructWithoutDependencies, StructWithOneDependencyTagged2>& dep)
+  explicit StructWithOneDependencyTagged2(ac::registry::Tagged<StructWithoutDependencies, StructWithOneDependencyTagged2>& dep)
           : _dependency(dep.Value())
   {
   }
 
-  static StructWithOneDependencyTagged2* Create(Tagged<StructWithoutDependencies, StructWithOneDependencyTagged2>& dep)
+  static StructWithOneDependencyTagged2* Create(ac::registry::Tagged<StructWithoutDependencies, StructWithOneDependencyTagged2>& dep)
   {
     return new StructWithOneDependencyTagged2(dep);
   }
@@ -92,8 +92,8 @@ struct StructWithOneDependencyTagged2 {
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_tagged_singletons)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddSingleton<StructWithOneDependencyTagged1>();
   registry.AddSingleton<StructWithOneDependencyTagged2>();
@@ -106,23 +106,23 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_creation_tagged_singletons)
 }
 
 struct StructWithOneDependencyVector {
-  explicit StructWithOneDependencyVector(ComponentContainer<StructWithoutDependencies> dep)
+  explicit StructWithOneDependencyVector(ac::registry::ComponentContainer<StructWithoutDependencies> dep)
    : _dependency(std::move(dep))
   {
   }
 
-  static StructWithOneDependencyVector* Create(ComponentContainer<StructWithoutDependencies> dep)
+  static StructWithOneDependencyVector* Create(ac::registry::ComponentContainer<StructWithoutDependencies> dep)
   {
     return new StructWithOneDependencyVector(std::move(dep));
   }
 
-  ComponentContainer<StructWithoutDependencies> _dependency;
+  ac::registry::ComponentContainer<StructWithoutDependencies> _dependency;
 };
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_creation_singletons)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddSingleton<StructWithOneDependencyVector>();
   registry.AddSingleton<StructWithoutDependencies>();
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_creation_singletons)
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_creation_transients)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddTransient<StructWithOneDependencyVector>();
   registry.AddSingleton<StructWithoutDependencies>();
@@ -148,23 +148,23 @@ BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_creation_transients)
 }
 
 struct StructWithOneDependencyVectorTagged {
-  explicit StructWithOneDependencyVectorTagged(Tagged<ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
+  explicit StructWithOneDependencyVectorTagged(ac::registry::Tagged<ac::registry::ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
    : _dependency(std::move(dep.Value()))
   {
   }
 
-  static StructWithOneDependencyVectorTagged* Create(Tagged<ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
+  static StructWithOneDependencyVectorTagged* Create(ac::registry::Tagged<ac::registry::ComponentContainer<StructWithoutDependencies>, StructWithOneDependencyVectorTagged> dep)
   {
     return new StructWithOneDependencyVectorTagged(std::move(dep));
   }
 
-  ComponentContainer<StructWithoutDependencies> _dependency;
+  ac::registry::ComponentContainer<StructWithoutDependencies> _dependency;
 };
 
 BOOST_AUTO_TEST_CASE(struct_with_one_dependency_vector_tagged_creation_singletons)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddTransient<StructWithOneDependencyVector>();
   registry.AddTransient<StructWithOneDependencyVectorTagged>();

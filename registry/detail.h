@@ -8,7 +8,7 @@
 #include <any>
 #include <typeindex>
 
-namespace detail {
+namespace ac::registry::detail {
 
 template<typename Type>
 struct ComponentInstanceGetter {
@@ -106,4 +106,4 @@ auto MakeArgumentsTuple(ProviderBase& cp, std::vector<AnyPtr>& dependencies)
   }
 }
 
-} // namespace detail
+} // namespace ac::registry::detail

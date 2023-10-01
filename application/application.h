@@ -4,18 +4,18 @@
 #include "registry/registry.h"
 #include "registry/provider.h"
 
-namespace components {
+namespace ac::application {
 
 class Application : IApplication {
-  Registry _registry;
-  Provider _provider;
+  registry::Registry _registry;
+  registry::Provider _provider;
 
 public:
   Application(int argc, char *argv[]);
 
-  Registry &Components() override;
+  registry::Registry &Components() override;
 
   void Run() override;
 };
 
-} // namespace components
+} // namespace ac::application

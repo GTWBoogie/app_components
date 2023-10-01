@@ -5,6 +5,8 @@
 #include <memory>
 #include <typeindex>
 
+namespace ac::registry {
+
 class Creator;
 using CreatorPtr = std::shared_ptr<Creator>;
 
@@ -41,3 +43,5 @@ protected:
   RegistryBase& _registry;
   std::unique_ptr<ProviderBaseState> _state;
 };
+
+} // namespace ac::registry

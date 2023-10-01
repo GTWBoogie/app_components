@@ -5,7 +5,7 @@
 
 #include "util/demangle.h"
 
-namespace detail {
+namespace ac::registry::detail {
 
 template<typename From, typename To>
 struct ConverterCreator {
@@ -48,4 +48,4 @@ Converter GetConverter() {
   return ConverterCreator<From, To>::Create();
 }
 
-} // namespace detail
+} // namespace ac::registry::detail

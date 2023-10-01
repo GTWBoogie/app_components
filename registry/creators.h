@@ -13,7 +13,7 @@
   #define CONSTRUCTOR(signature) using Constructor = signature; signature
 #endif
 
-namespace detail {
+namespace ac::registry::detail {
 
 template<typename T> auto MakeArgumentsTuple(ProviderBase&, std::vector<AnyPtr>&);
 
@@ -132,4 +132,4 @@ CreatorPtr GetAdaptedObjectCreator(T *object, bool managed = true) {
   });
 }
 
-} // namespace detail
+} // namespace ac::registry::detail

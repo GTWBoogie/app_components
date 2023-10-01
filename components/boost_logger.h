@@ -2,7 +2,7 @@
 
 #include "ilogger.h"
 
-namespace components {
+namespace ac::components {
 
 class BoostLogger : public ILogger {
 public:
@@ -19,4 +19,4 @@ public:
   void SetLevel(Level level) override;
 };
 
-} // components
+} // ac::components

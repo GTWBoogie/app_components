@@ -5,7 +5,7 @@
 
 BOOST_AUTO_TEST_CASE(single_stop_token)
 {
-  util::stop_source source;
+  ac::util::stop_source source;
 
   auto token = source.get_token();
 
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(single_stop_token)
 
 BOOST_AUTO_TEST_CASE(two_stop_token_instances_from_single_source)
 {
-  util::stop_source source;
+  ac::util::stop_source source;
 
   auto token1 = source.get_token();
   auto token2 = source.get_token();
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(two_stop_token_instances_from_single_source)
 
 BOOST_AUTO_TEST_CASE(stop_token_instance_copied_from_previous)
 {
-  util::stop_source source;
+  ac::util::stop_source source;
 
   auto token1 = source.get_token();
   auto token2(token1);

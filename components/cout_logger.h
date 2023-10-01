@@ -2,7 +2,7 @@
 
 #include "ilogger.h"
 
-namespace components {
+namespace ac::components {
 
 class COutLogger : public ILogger {
 public:
@@ -16,4 +16,4 @@ public:
   void Fatal(const std::string &msg) override;
 };
 
-} // components
+} // ac:components

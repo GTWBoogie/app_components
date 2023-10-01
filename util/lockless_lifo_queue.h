@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-namespace util {
+namespace ac::util {
 
 template<typename Type> struct Node {
   Node *_next;
@@ -64,4 +64,4 @@ protected:
   Alloc _allocator;
 };
 
-} // namespace util
+} // namespace ac::util

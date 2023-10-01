@@ -5,6 +5,8 @@
 #include "instance.h"
 #include "tagged_type.h"
 
+namespace ac::registry {
+
 class Description;
 class Provider;
 class RegistryBase;
@@ -75,3 +77,5 @@ protected:
 
   Provider& _parent;
 };
+
+} // namespace ac::registry

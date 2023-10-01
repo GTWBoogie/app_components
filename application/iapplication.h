@@ -1,14 +1,18 @@
 #pragma once
 
+namespace ac::registry {
+
 class Registry;
 
-namespace components {
+} // namespace ac::registry
+
+namespace ac::application {
 
 class IApplication
 {
 public:
-  virtual Registry& Components() = 0;
+  virtual registry::Registry& Components() = 0;
   virtual void Run() = 0;
 };
 
-} // namespace components
+} // namespace ac::application

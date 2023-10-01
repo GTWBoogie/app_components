@@ -21,9 +21,8 @@ components)
 
 ## Building
 
-To build everything from this repository you need to use [Bazel](https://bazel.build/) build system.
-
-It should automatically download required CLang compiler version and all dependencies during first build process.
+You need a C++ compiler that has support for C++20 features and to build everything from this repository you also have
+to install [Bazel](https://bazel.build/) build system.
 
 Building all executables:
 

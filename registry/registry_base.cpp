@@ -6,6 +6,8 @@
 
 #include <map>
 
+namespace ac::registry {
+
 struct RegistryBase::RegistryBaseState {
   std::map<std::type_index, std::vector<Description>> _descriptions;
 };
@@ -44,3 +46,5 @@ std::vector<Description>& RegistryBase::GetDescriptions(std::type_index type)
 
   return it->second;
 }
+
+} // namespace ac::registry

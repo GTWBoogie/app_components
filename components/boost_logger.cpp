@@ -4,7 +4,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
 
-namespace components {
+namespace ac::components {
 
 BoostLogger::BoostLogger()
  : ILogger()
@@ -65,4 +65,4 @@ void BoostLogger::SetLevel(Level level)
 }
 
 
-} // components
+} // ac::components

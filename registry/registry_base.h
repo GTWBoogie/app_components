@@ -6,6 +6,8 @@
 #include <typeindex>
 #include <vector>
 
+namespace ac::registry {
+
 class Creator;
 using CreatorPtr = std::shared_ptr<Creator>;
 
@@ -32,3 +34,5 @@ private:
 
   std::unique_ptr<RegistryBaseState> _state;
 };
+
+} // namespace ac::registry

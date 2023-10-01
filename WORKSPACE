@@ -4,50 +4,35 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 #-----------------------------------------------------------------------------
-# LLVM toolchain
-
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-BAZEL_TOOLCHAIN_TAG = "0.7.2"
-BAZEL_TOOLCHAIN_SHA = "f7aa8e59c9d3cafde6edb372d9bd25fb4ee7293ab20b916d867cd0baaa642529"
-
-http_archive(
-   name = "com_grail_bazel_toolchain",
-   sha256 = BAZEL_TOOLCHAIN_SHA,
-   strip_prefix = "bazel-toolchain-{tag}".format(tag = BAZEL_TOOLCHAIN_TAG),
-   canonical_id = BAZEL_TOOLCHAIN_TAG,
-   url = "https://github.com/grailbio/bazel-toolchain/archive/{tag}.tar.gz".format(tag = BAZEL_TOOLCHAIN_TAG),
-)
-
-load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
-
-bazel_toolchain_dependencies()
-
-load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
-
-llvm_toolchain(
-   name = "llvm_toolchain",
-   llvm_version = "14.0.0",
-)
-
-load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
-
-llvm_register_toolchains()
-
-#-----------------------------------------------------------------------------
 # Boost libraries
 
-_RULES_BOOST_COMMIT = "652b21e35e4eeed5579e696da0facbe8dba52b1f"
+_RULES_BOOST_COMMIT = "1b73fb2bbbaed530f85db89eb2373c7b2e2d0ac5"
 
 http_archive(
-  name = "com_github_nelhage_rules_boost",
-  sha256 = "c1b8b2adc3b4201683cf94dda7eef3fc0f4f4c0ea5caa3ed3feffe07e1fb5b15",
-  strip_prefix = "rules_boost-%s" % _RULES_BOOST_COMMIT,
-  urls = [
-    "https://github.com/nelhage/rules_boost/archive/%s.tar.gz" % _RULES_BOOST_COMMIT,
-  ],
+    name = "com_github_nelhage_rules_boost",
+    sha256 = "407812a1d32f25810c98d00c2d9c94e73dbdba09707604e423b19ae05ab45cca",
+    strip_prefix = "rules_boost-%s" % _RULES_BOOST_COMMIT,
+    urls = [
+        "https://github.com/nelhage/rules_boost/archive/%s.tar.gz" % _RULES_BOOST_COMMIT,
+    ],
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
+
 boost_deps()
+
+#-----------------------------------------------------------------------------
+# Compile database support
+
+http_archive(
+    name = "hedron_compile_commands",
+
+    # Replace the commit hash in both places (below) with the latest, rather than using the stale one here.
+    # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/e16062717d9b098c3c2ac95717d2b3e661c50608.tar.gz",
+    strip_prefix = "bazel-compile-commands-extractor-e16062717d9b098c3c2ac95717d2b3e661c50608",
+    sha256 = "ed5aea1dc87856aa2029cb6940a51511557c5cac3dbbcb05a4abd989862c36b4",
+)
+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
+hedron_compile_commands_setup()
 

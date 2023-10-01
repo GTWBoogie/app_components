@@ -5,6 +5,8 @@
 #include <functional>
 #include <memory>
 
+namespace ac::registry {
+
 class ProviderBase;
 
 class Creator;
@@ -27,3 +29,5 @@ private:
 
   CreateFunction _creator;
 };
+
+} // namespace ac::registry

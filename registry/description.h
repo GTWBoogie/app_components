@@ -5,6 +5,8 @@
 #include "converter.h"
 #include "lifetime.h"
 
+namespace ac::registry {
+
 class Creator;
 using CreatorPtr = std::shared_ptr<Creator>;
 
@@ -26,3 +28,5 @@ private:
   CreatorPtr _creator;
   Converter  _converter;
 };
+
+} // namespace ac::registry

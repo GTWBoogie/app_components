@@ -7,7 +7,7 @@
 
 #include <thread>
 
-namespace components {
+namespace ac::application {
 
 Application::Application(int argc, char *argv[])
  : _registry()
@@ -15,7 +15,7 @@ Application::Application(int argc, char *argv[])
 {
 }
 
-Registry &Application::Components() {
+registry::Registry &Application::Components() {
   return _registry;
 }
 
@@ -25,12 +25,12 @@ void Application::Run() {
   _registry.AddInstance<util::stop_source>(&stop_source, false);
   _registry.AddInstance<components::SignalHandler>(new components::SignalHandler(stop_source));
   _registry.AddTransient<util::stop_token>([&stop_source]() { return new util::stop_token(stop_source.get_token()); });
-  _registry.AddInstance<Registry>(&Components(), false);
-  _registry.AddInstance<Provider>(&_provider, false);
-  _registry.TryAddSingleton<COutLogger, ILogger>();
+  _registry.AddInstance<registry::Registry>(&Components(), false);
+  _registry.AddInstance<registry::Provider>(&_provider, false);
+  _registry.TryAddSingleton<components::COutLogger, components::ILogger>();
 
   auto services = _provider.GetInstances<components::IService>();
-  auto& logger = _provider.GetInstance<ILogger>();
+  auto& logger = _provider.GetInstance<components::ILogger>();
 
   std::vector<std::thread> threads;
   for (components::IService &service: services) {
@@ -51,8 +51,8 @@ void Application::Run() {
   }
 
   while (!stop_source.stop_requested()) { std::this_thread::yield(); }
-  for (IService &service: services) { service.Stop(stop_source.get_token()); }
+  for (components::IService &service: services) { service.Stop(stop_source.get_token()); }
   for (std::thread &thread: threads) { thread.join(); }
 }
 
-} // namespace components
+} // namespace ac::application

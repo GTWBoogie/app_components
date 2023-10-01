@@ -2,6 +2,8 @@
 
 #include <functional>
 
+namespace ac::registry {
+
 template<typename Type, typename Tag>
 class Tagged {
 public:
@@ -42,3 +44,5 @@ struct IsTaggedType<Tagged<Type, Tag>> : public std::true_type {};
 
 template<typename T>
 concept TaggedType = IsTaggedType<T>::value;
+
+} // namespace ac::registry

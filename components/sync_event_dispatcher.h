@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace components {
+namespace ac::components {
 
 class SyncEventDispatcher : public IEventDispatcher {
   struct SyncEventDispatcherState;
@@ -21,4 +21,4 @@ private:
   std::unique_ptr<SyncEventDispatcherState> _state;
 };
 
-} // namespace components
+} // namespace ac::components

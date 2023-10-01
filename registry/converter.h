@@ -5,6 +5,8 @@
 #include <memory>
 #include <utility>
 
+namespace ac::registry {
+
 using AnyPtr = std::shared_ptr<std::any>;
 
 class Converter
@@ -25,3 +27,5 @@ public:
 private:
   ConvertFunction _converter;
 };
+
+} // namespace ac::registry

@@ -24,8 +24,8 @@ struct DefaulInitializableAndCreatableStruct {
 
 BOOST_AUTO_TEST_CASE(CreatableTakesPrecedenseOverDefaultInitializable)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
 
   registry.AddSingleton<DefaulInitializableAndCreatableStruct>();
   auto &created = provider.GetInstance<DefaulInitializableAndCreatableStruct>();
@@ -49,8 +49,8 @@ struct ConstructorExposedAndCreatableStruct {
 
 BOOST_AUTO_TEST_CASE(CreatableTakesPrecedenseOverConstructorExposed)
 {
-  Registry registry;
-  Provider provider(registry);
+  ac::registry::Registry registry;
+  ac::registry::Provider provider(registry);
   int i = 0; registry.AddInstance(i);
 
   registry.AddSingleton<ConstructorExposedAndCreatableStruct>();

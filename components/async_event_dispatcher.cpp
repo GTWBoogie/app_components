@@ -15,7 +15,7 @@ using EventType = std::pair<std::type_index, const std::any>;
 
 }
 
-namespace components {
+namespace ac::components {
 
 struct ASyncEventDispatcher::ASyncEventDispatcherState {
   std::map<std::type_index, std::vector<std::function<void(const std::any &)>>> handlers;
@@ -80,4 +80,4 @@ void ASyncEventDispatcher::Emit(std::type_index type, const std::any &event)
   _state->event_queue.push({type, event});
 }
 
-} // namespace components
+} // ac::namespace components

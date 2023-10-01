@@ -5,6 +5,8 @@
 #include "description.h"
 #include "registry_base.h"
 
+namespace ac::registry {
+
 Provider::Provider(RegistryBase& registry)
  : ProviderBase(registry)
 {
@@ -65,3 +67,4 @@ Instance ScopedProvider::ManageInstanceCreation(Description& description, std::t
   }
 }
 
+} // namespace ac::registry

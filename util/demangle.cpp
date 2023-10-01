@@ -2,7 +2,7 @@
 
 #include <boost/core/demangle.hpp>
 
-namespace util {
+namespace ac::util {
 
 std::string get_demangled_type_name(const char *type_name)
 {
@@ -14,4 +14,4 @@ std::string get_demangled_type_name(const std::type_info& type_info)
   return get_demangled_type_name(type_info.name());
 }
 
-} // namespace util
+} // namespace ac::util

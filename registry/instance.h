@@ -6,6 +6,8 @@
 
 using AnyPtr = std::shared_ptr<std::any>;
 
+namespace ac::registry {
+
 struct Instance {
   ~Instance()
   {
@@ -19,3 +21,4 @@ struct Instance {
   std::vector<AnyPtr> dependencies;
 };
 
+} // namespace ac::registry

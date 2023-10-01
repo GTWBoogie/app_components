@@ -15,6 +15,8 @@ const std::type_index _providerDefaultTagIndex = std::type_index(typeid(Provider
 
 } // namespace
 
+namespace ac::registry {
+
 struct ProviderBase::ProviderBaseState
 {
   std::recursive_mutex _mutex;
@@ -83,3 +85,5 @@ std::vector<Instance> ProviderBase::GetComponentInstances(std::type_index type, 
 
   return result;
 }
+
+} // namespace ac::registry

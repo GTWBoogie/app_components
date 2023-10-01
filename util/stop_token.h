@@ -4,7 +4,7 @@
 
 // TODO: make it work with std::stop_token on GCC, implement better one for CLang
 
-namespace util {
+namespace ac::util {
 
 class stop_source;
 class stop_state;
@@ -33,5 +33,5 @@ public:
   bool request_stop() noexcept;
 };
 
-} // namespace util
+} // namespace ac::util
 

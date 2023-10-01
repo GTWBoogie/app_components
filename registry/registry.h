@@ -6,6 +6,8 @@
 #include "converters.h"
 #include "detail.h"
 
+namespace ac::registry {
+
 class Registry : public RegistryBase {
 public:
   Registry() = default;
@@ -136,3 +138,4 @@ protected:
   }
 };
 
+} // namespace ac::registry

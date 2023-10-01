@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace components {
+namespace ac::components {
 
 class ILogger {
 public:
@@ -32,4 +32,4 @@ protected:
   Level _level;
 };
 
-} // components
+} // ac::components

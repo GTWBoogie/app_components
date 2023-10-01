@@ -2,11 +2,11 @@
 
 #include "util/stop_token.h"
 
-namespace components {
+namespace ac::components {
 
 class SignalHandler {
 public:
   SignalHandler(util::stop_source& source);
 };
 
-} // components
+} // ac::components

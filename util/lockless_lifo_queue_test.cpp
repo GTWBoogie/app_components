@@ -7,7 +7,7 @@
 
 BOOST_AUTO_TEST_CASE(sequential_input_will_be_reversed)
 {
-  util::LocklessLIFOQueue<int> queue;
+  ac::util::LocklessLIFOQueue<int> queue;
 
   std::vector<int> input(10);
 
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(sequential_input_will_be_reversed)
 
 BOOST_AUTO_TEST_CASE(sequential_input_will_be_reversed_by_parts)
 {
-  util::LocklessLIFOQueue<int> queue;
+  ac::util::LocklessLIFOQueue<int> queue;
 
   std::vector<int> result;
 

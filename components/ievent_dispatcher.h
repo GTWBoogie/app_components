@@ -4,7 +4,7 @@
 #include <functional>
 #include <typeindex>
 
-namespace components {
+namespace ac::components {
 
 class IEventDispatcher {
 public:
@@ -39,4 +39,4 @@ protected:
   virtual void Emit(std::type_index type, const std::any& event) = 0;
 };
 
-} // namespace components
+} // namespace ac::components

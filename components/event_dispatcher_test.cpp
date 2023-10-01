@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_one_type_sync_event_dispatcher)
 {
   std::vector<std::string> processed;
 
-  components::SyncEventDispatcher dispatcher;
+  ac::components::SyncEventDispatcher dispatcher;
 
   auto handler1 = dispatcher.RegisterHandler<EventA>(
           [&processed](const EventA& event) {
@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_one_type_async_event_dispatcher)
   size_t end = 1000;
 
   {
-    util::stop_source stop_source;
-    components::ASyncEventDispatcher dispatcher(stop_source.get_token());
+    ac::util::stop_source stop_source;
+    ac::components::ASyncEventDispatcher dispatcher(stop_source.get_token());
 
     dispatcher.RegisterHandler<EventA>(
             [&processed](const EventA &event) {
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_two_types_sync_event_dispatcher)
 {
   std::vector<std::string> processed;
 
-  components::SyncEventDispatcher dispatcher;
+  ac::components::SyncEventDispatcher dispatcher;
 
   dispatcher.RegisterHandler<EventA>(
           [&processed](const EventA& event) {
@@ -135,8 +135,8 @@ BOOST_AUTO_TEST_CASE(register_handlers_for_two_types_async_event_dispatcher)
   std::vector<std::string> processed;
 
   {
-    util::stop_source stop_source;
-    components::ASyncEventDispatcher dispatcher(stop_source.get_token());
+    ac::util::stop_source stop_source;
+    ac::components::ASyncEventDispatcher dispatcher(stop_source.get_token());
 
     dispatcher.RegisterHandler<EventA>(
             [&processed](const EventA &event) {
