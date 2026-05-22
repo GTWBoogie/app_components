@@ -1,3 +1,6 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
@@ -28,7 +31,7 @@ cc_library(
     hdrs = ["boost_logger.h"],
     deps = [
         "ilogger",
-        "@boost//:log",
+        "@boost.log",
     ],
 )
 
@@ -68,5 +71,6 @@ cc_test(
     deps = [
         ":async_event_dispatcher",
         ":sync_event_dispatcher",
+        "@boost.test",
     ],
 )

@@ -1,3 +1,6 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
@@ -10,7 +13,7 @@ cc_test(
     srcs = ["tuple_test.cpp"],
     deps = [
         ":tuple",
-        "@boost//:test",
+        "@boost.test",
     ],
 )
 
@@ -25,7 +28,7 @@ cc_test(
     srcs = ["stop_token_test.cpp"],
     deps = [
         ":stop_token",
-        "@boost//:test",
+        "@boost.test",
     ],
 )
 
@@ -33,7 +36,7 @@ cc_library(
     name = "demangle",
     srcs = ["demangle.cpp"],
     hdrs = ["demangle.h"],
-    deps = ["@boost//:core"],
+    deps = ["@boost.core"],
 )
 
 cc_test(
@@ -41,7 +44,7 @@ cc_test(
     srcs = ["demangle_test.cpp"],
     deps = [
         ":demangle",
-        "@boost//:test",
+        "@boost.test",
     ],
 )
 
@@ -58,5 +61,8 @@ cc_library(
 cc_test(
     name = "lockless_lifo_queue_test",
     srcs = ["lockless_lifo_queue_test.cpp"],
-    deps = [":lockless_lifo_queue"],
+    deps = [
+        ":lockless_lifo_queue",
+        "@boost.test",
+    ],
 )

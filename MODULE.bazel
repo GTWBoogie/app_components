@@ -1,0 +1,9 @@
+module(name = "app_components", version = "0.2.0")
+
+bazel_dep(name = "rules_cc", version = "0.2.18")
+
+bazel_dep(name = "boost.log", version = "1.90.0.bcr.1")
+bazel_dep(name = "boost.callable_traits", version = "1.90.0.bcr.1")
+bazel_dep(name = "boost.core", version = "1.90.0.bcr.1")
+bazel_dep(name = "boost.test", version = "1.90.0.bcr.1")
+

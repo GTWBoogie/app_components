@@ -1,3 +1,7 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
+
 cc_library(
     name = "lifetime",
     hdrs = ["lifetime.h"],
@@ -68,7 +72,7 @@ cc_library(
     deps = [
         ":creator",
         ":provider_base",
-        "@boost//:callable_traits",
+        "@boost.callable_traits",
     ],
 )
 
@@ -102,23 +106,35 @@ cc_library(
 cc_test(
     name = "instance_creation_test",
     srcs = ["instance_creation_test.cpp"],
-    deps = [":registry"],
+    deps = [
+        ":registry",
+        "@boost.test",
+    ],
 )
 
 cc_test(
     name = "instance_scope_test",
     srcs = ["instance_scope_test.cpp"],
-    deps = [":registry"],
+    deps = [
+        ":registry",
+        "@boost.test",
+    ],
 )
 
 cc_test(
     name = "dependency_injection_test",
     srcs = ["dependency_injection_test.cpp"],
-    deps = [":registry"],
+    deps = [
+        ":registry",
+        "@boost.test",
+    ],
 )
 
 cc_test(
     name = "creation_method_precedence_test",
     srcs = ["creation_method_precedence_test.cpp"],
-    deps = [":registry"],
+    deps = [
+        ":registry",
+        "@boost.test",
+    ],
 )
